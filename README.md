@@ -1,4 +1,4 @@
-# Track My Wealth Ledger Service
+# Track My Wealth – Ledger Service
 
 The part of the Track My Wealth Project that organizes the ledger with double-entry accounting.
 
