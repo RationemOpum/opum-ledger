@@ -1,0 +1,73 @@
+[project]
+name = "trackmywealth-ledger"
+version = "0.1.0"
+description = "Track My Wealth Ledger Backend Service"
+authors = ["Dmytro Tyzhnenko <t.dmitry@gmail.com>"]
+readme = "README.md"
+requires-python = ">=3.14"
+packages = [{ include = "tmw_ledger" }]
+
+dependencies = [
+    "beanie>=2.0.0",
+    "blacksheep[full]>=2.4.2",
+    "email-validator>=2.3.0",
+    "essentials-configuration[yaml]>=2.0.4",
+    "essentials-openapi[full]>=1.2.1",
+    "orjson>=3.11.3",
+    "pendulum>=3.1.0",
+    "pydantic>=2.12.0",
+    "uvicorn>=0.37.0",
+    "uvloop>=0.21.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "polyfactory>=2.22.2",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+    "pytest-cov>=7.0.0",
+    "pytest-env>=1.1.5",
+    "pytest-mongo>=3.2.1",
+    "ruff>=0.13.3",
+]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py313"
+exclude = [
+    ".git",
+    ".venv",
+    ".direnv",
+    ".eggs",
+    ".git-rewrite",
+    ".mypy_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".tox",
+    "__pycache__",
+    "__pypackages__",
+    "_build",
+    "build",
+    "buck-out",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "C", "D", "Q", "S", "T"]
