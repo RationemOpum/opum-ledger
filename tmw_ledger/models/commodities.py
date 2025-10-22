@@ -1,21 +1,28 @@
-# from datetime import datetime
-from uuid import uuid7
+from pymongo import IndexModel
 
-from pydantic import UUID7, Field
-
+from tmw_ledger.domain.types.commodity import (
+    CommodityCode,
+    CommodityIsOnMarket,
+    CommodityName,
+    CommoditySubunit,
+    CommoditySymbol,
+    CommodityUUID,
+)
+from tmw_ledger.domain.types.ledger import LedgerUUID
 from tmw_ledger.models.base import BaseAppModel
 
 
 class CommodityModel(BaseAppModel):
     """Commodities model."""
 
-    id: UUID7 = Field(default_factory=uuid7)  # pyright: ignore[reportIncompatibleVariableOverride]
-    name: str = Field(..., min_length=1, max_length=256)
-    code: str = Field(..., min_length=1, max_length=8)
-    symbol: str | None = Field(..., min_length=1, max_length=8)
-    subunit: int = Field(100, ge=1)
-    no_market: bool = Field(True)
-    ledger_id: UUID7
+    id: CommodityUUID  # pyright: ignore[reportIncompatibleVariableOverride,reportGeneralTypeIssues]
+    name: CommodityName
+    code: CommodityCode
+    symbol: CommoditySymbol
+    subunit: CommoditySubunit
+    no_market: CommodityIsOnMarket
+    ledger_id: LedgerUUID
 
     class Settings:
         name: str = "commodities"
+        indexes: list[IndexModel] = [IndexModel(["ledger_id", "code"], unique=True)]

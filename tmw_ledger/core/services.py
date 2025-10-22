@@ -27,13 +27,13 @@ def add_service(scope: ScopeType = "scoped"):
     def decorator(target: T) -> T:
         match scope:
             case "scoped":
-                _ = container.add_scoped(type(target))
+                _ = container.add_scoped(target)
             case "singleton":
-                _ = container.add_singleton(type(target))
+                _ = container.add_singleton(target)
             case "transient":
-                _ = container.add_transient(type(target))
+                _ = container.add_transient(target)
             case "scoped_factory":
-                _ = container.add_scoped_by_factory(type(target))
+                _ = container.add_scoped_by_factory(target)
             case _:
                 raise ValueError(f"Invalid scope: {scope}")
 

@@ -1,15 +1,16 @@
-from uuid import uuid7
+from pymongo import IndexModel
 
-from pydantic import UUID7, Field
-
+from tmw_ledger.domain.types.ledger import LedgerDescription, LedgerName, LedgerUUID
 from tmw_ledger.models.base import BaseAppModel
 
 
 class LedgerModel(BaseAppModel):
     """Ledger model."""
 
-    id: UUID7 = Field(default_factory=uuid7)  # pyright: ignore[reportIncompatibleVariableOverride]
-    name: str = Field(..., min_length=1, max_length=256)
+    id: LedgerUUID  # pyright: ignore[reportGeneralTypeIssues,reportIncompatibleVariableOverride]
+    name: LedgerName
+    description: LedgerDescription | None = None
 
     class Settings:
         name: str = "ledgers"
+        indexes: list[IndexModel] = [IndexModel(["name"], unique=True)]

@@ -165,3 +165,6 @@ fabric.properties
 
 # Ruff
 .ruff_cache/
+
+# Settings
+settings.json
