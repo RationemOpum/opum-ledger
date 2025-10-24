@@ -1,11 +1,11 @@
 """Types for the Ledger domain."""
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, TypeAlias
 
 from pydantic import UUID7, Field
 
-type LedgerUUID = Annotated[
+LedgerUUID: TypeAlias = Annotated[
     UUID7,
     Field(
         ...,
@@ -17,7 +17,7 @@ type LedgerUUID = Annotated[
 ]
 
 
-type LedgerName = Annotated[
+LedgerName: TypeAlias = Annotated[
     str,
     Field(
         ...,
@@ -30,7 +30,7 @@ type LedgerName = Annotated[
     ),
 ]
 
-type LedgerDescription = Annotated[
+LedgerDescription: TypeAlias = Annotated[
     str,
     Field(
         ...,
@@ -43,7 +43,7 @@ type LedgerDescription = Annotated[
     ),
 ]
 
-type LedgerCreatedAt = Annotated[
+LedgerCreatedAt: TypeAlias = Annotated[
     datetime,
     Field(
         ...,
@@ -54,7 +54,7 @@ type LedgerCreatedAt = Annotated[
     ),
 ]
 
-type LedgerUpdatedAt = Annotated[
+LedgerUpdatedAt: TypeAlias = Annotated[
     datetime,
     Field(
         ...,

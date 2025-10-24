@@ -1,12 +1,12 @@
 """Types for the Commodity domain."""
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, TypeAlias
 from uuid import uuid7
 
 from pydantic import UUID7, Field
 
-type CommodityName = Annotated[
+CommodityName: TypeAlias = Annotated[
     str,
     Field(
         ...,
@@ -16,7 +16,7 @@ type CommodityName = Annotated[
     ),
 ]
 
-type CommodityCode = Annotated[
+CommodityCode: TypeAlias = Annotated[
     str,
     Field(
         ...,
@@ -26,7 +26,7 @@ type CommodityCode = Annotated[
     ),
 ]
 
-type CommoditySymbol = Annotated[
+CommoditySymbol: TypeAlias = Annotated[
     str | None,
     Field(
         ...,
@@ -36,7 +36,7 @@ type CommoditySymbol = Annotated[
     ),
 ]
 
-type CommoditySubunit = Annotated[
+CommoditySubunit: TypeAlias = Annotated[
     int,
     Field(
         ...,
@@ -45,7 +45,7 @@ type CommoditySubunit = Annotated[
     ),
 ]
 
-type CommodityIsOnMarket = Annotated[
+CommodityIsOnMarket: TypeAlias = Annotated[
     bool,
     Field(
         ...,
@@ -54,7 +54,7 @@ type CommodityIsOnMarket = Annotated[
 ]
 
 
-type CommodityUUID = Annotated[
+CommodityUUID: TypeAlias = Annotated[
     UUID7,
     Field(
         ...,
@@ -66,7 +66,7 @@ type CommodityUUID = Annotated[
 ]
 
 
-type CommodityUpdatedAt = Annotated[
+CommodityUpdatedAt: TypeAlias = Annotated[
     datetime,
     Field(
         ...,
@@ -77,7 +77,7 @@ type CommodityUpdatedAt = Annotated[
     ),
 ]
 
-type CommodityCreatedAt = Annotated[
+CommodityCreatedAt: TypeAlias = Annotated[
     datetime,
     Field(
         ...,
