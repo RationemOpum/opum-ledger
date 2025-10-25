@@ -14,6 +14,7 @@ from essentials.exceptions import (
 )
 from pydantic import ValidationError
 
+from tmw_ledger.core.exeptions import PreconditionFailed
 from tmw_ledger.core.logging import logger
 
 
@@ -137,6 +138,18 @@ def configure_error_handlers(app: Application) -> None:
             status=409,
         )
 
+    async def precondition_failed_error(
+        _app: Application, _request: Request, exception: PreconditionFailed
+    ) -> Response:
+        logger.debug("Precondition Failed ERROR", exc_info=exception)
+        return pretty_json(
+            {
+                "detail": str(exception) or "Precondition Failed",
+                "status_code": 412,
+            },
+            status=412,
+        )
+
     app.exceptions_handlers.update(
         {
             500: server_error,
@@ -150,5 +163,6 @@ def configure_error_handlers(app: Application) -> None:
             Exception: server_error,
             InvalidRequestBody: invalid_body_error,
             ConflictException: conflict_error,
+            PreconditionFailed: precondition_failed_error,
         }
     )
