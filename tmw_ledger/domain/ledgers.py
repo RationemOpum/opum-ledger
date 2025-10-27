@@ -1,13 +1,15 @@
-from datetime import datetime
-from typing import Annotated, ClassVar, final
+from typing import ClassVar
 from uuid import uuid7
 
+import pendulum
 from beanie.odm.operators.update.general import Set
-from essentials.exceptions import ConflictException
+from essentials.exceptions import ConflictException, ObjectNotFound
+from pendulum import DateTime
 from pydantic import UUID7, BaseModel, ConfigDict, Field
 from pymongo import DESCENDING
 from pymongo.errors import DuplicateKeyError
 
+from tmw_ledger.core.exeptions import PreconditionFailed
 from tmw_ledger.core.services import add_service
 from tmw_ledger.domain.types.ledger import LedgerCreatedAt, LedgerDescription, LedgerName, LedgerUpdatedAt, LedgerUUID
 from tmw_ledger.models.ledger import LedgerModel
@@ -29,9 +31,8 @@ class Ledger(NewLedger):
 
 
 class UpdateLedger(BaseModel):
-    name: LedgerName | None
-    description: LedgerDescription | None
-    updated_at: LedgerUpdatedAt
+    name: LedgerName | None = None
+    description: LedgerDescription | None = None
 
 
 @add_service(scope="scoped")
@@ -58,21 +59,38 @@ class LedgersDAL:
         ).to_list()
         return [Ledger.model_validate(ledger) for ledger in ledgers]
 
-    async def get_by_id(self, ledger_id: UUID7) -> Ledger:
+    async def get_one(self, ledger_id: UUID7) -> Ledger:
         ledger = await LedgerModel.find_one(
             LedgerModel.id == ledger_id,
             LedgerModel.deleted_at == None,  # noqa E711
         )
+        if ledger is None:
+            raise ObjectNotFound("Ledger not found")
+
         return Ledger.model_validate(ledger)
 
-    async def update(self, ledger_id: UUID7, ledger: UpdateLedger) -> Ledger:
-        await LedgerModel.find_one(  # pyright: ignore[reportUnusedCallResult]
+    async def update_one(
+        self,
+        ledger_id: UUID7,
+        data: UpdateLedger,
+        updated_at: DateTime | None = None,
+    ) -> Ledger:
+        ledger = await LedgerModel.find_one(  # pyright: ignore[reportUnusedCallResult]
             LedgerModel.id == ledger_id,
             LedgerModel.deleted_at == None,  # noqa E711
-        ).update_one(
-            Set(ledger.model_dump(exclude_unset=True, exclude={"id"})),
         )
-        return await self.get_by_id(ledger_id)
+        if ledger is None:
+            raise ObjectNotFound("Ledger not found")
+
+        if updated_at and pendulum.instance(ledger.updated_at) > updated_at:
+            raise PreconditionFailed(f"Ledger has been modified since {updated_at}")
+
+        update_data = data.model_dump(exclude_unset=True)
+        update_data["updated_at"] = pendulum.now("UTC")
+
+        await ledger.update(Set(update_data))
+
+        return await self.get_one(ledger_id)
 
 
 @add_service(scope="scoped")
@@ -96,8 +114,17 @@ class LedgersBL:
         ledgers = await self.dal.get_all()
         return ledgers
 
-    async def get_by_id(self, id_: UUID7) -> Ledger:
-        return await self.dal.get_by_id(id_)
+    async def get_one(self, id_: UUID7) -> Ledger:
+        return await self.dal.get_one(id_)
 
-    async def update_by_id(self, id_: UUID7, data: UpdateLedger) -> Ledger:
-        return await self.dal.update(id_, data)
+    async def update_one(
+        self,
+        ledger_id: UUID7,
+        data: UpdateLedger,
+        updated_at: DateTime | None = None,
+    ) -> Ledger:
+        return await self.dal.update_one(
+            ledger_id,
+            data,
+            updated_at,
+        )

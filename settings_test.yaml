@@ -1,0 +1,30 @@
+# Default application settings, to run the application for local development.
+info:
+  title: Track My Wealth Ledger Backend Service
+  version: 0.1.0
+  description: Service to track ledger with double-entry accounting
+
+app:
+  debug: true
+  show_error_details: true
+  cors_origins: "*"
+
+  # limit for the size of the file that can be uploaded (5MB default)
+  import_file_size_limit: 5242880 # bytes
+
+  # serve static files configuration
+  static:
+    serve_static: false
+    static_path: /static
+
+auth:
+  x_api_key: "your_api_key_here"
+
+# database settings
+db:
+  driver: mongodb
+  host: localhost
+  user:
+  password:
+  port: 27018
+  database: ledger_test

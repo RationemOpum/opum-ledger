@@ -24,8 +24,8 @@ class Database(BaseModel):
     driver: str = "mongodb"
     host: str = "localhost"
     port: int = 27017
-    user: str = "user"
-    password: str = "password"
+    user: str | None = "user"
+    password: str | None = "password"
     database: str = "ledger"
 
 
@@ -49,7 +49,7 @@ class Settings(BaseModel):
     db: Database = Database()
 
 
-def load_configuration() -> Settings:
+def load_settings() -> Settings:
     """Load the application settings.
 
     Returns:

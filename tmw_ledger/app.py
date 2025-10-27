@@ -11,7 +11,7 @@ from tmw_ledger.core.json import use_orjson
 from tmw_ledger.core.logging import config_logger
 from tmw_ledger.core.services import configure_services
 from tmw_ledger.db import use_beanie
-from tmw_ledger.settings import Settings, load_configuration
+from tmw_ledger.settings import Settings, load_settings
 
 
 def configure_application(
@@ -60,7 +60,7 @@ def get_app() -> Application:
 
     """
     try:
-        return configure_application(*configure_services(load_configuration()))
+        return configure_application(*configure_services(load_settings()))
     except Exception as exc:
         return get_diagnostic_app(exc)
 
