@@ -1,9 +1,15 @@
 """Commodities API controller module."""
 
+from typing import Annotated
+
+import pendulum
+from blacksheep import Response, json
 from blacksheep.server.authorization import auth
 from blacksheep.server.controllers import APIController, delete, get, post, put
 from pydantic import UUID7
 
+from tmw_ledger.controllers.base import IfMatch
+from tmw_ledger.core.logging import logger
 from tmw_ledger.domain.commodities import CommoditiesBL, Commodity, NewCommodity, UpdateCommodity
 
 
@@ -35,18 +41,27 @@ class Commodities(APIController):
         commodities: CommoditiesBL,
         ledger_id: UUID7,
         commodity: NewCommodity,
-    ) -> Commodity:
+    ) -> Annotated[Response, Commodity]:
         """Add a new commodity.
 
         Add a new commodity to the ledger.
         """
         new_commodity = await commodities.create(
+            ledger_id=ledger_id,
             commodity_code=commodity.code,
             commodity_name=commodity.name,
+            commodity_subunit=commodity.subunit,
             commodity_symbol=commodity.symbol,
-            ledger_id=ledger_id,
+            commodity_no_market=commodity.no_market,
         )
-        return new_commodity
+
+        response = json(new_commodity)
+        response.add_header(
+            b"ETag",
+            str(new_commodity.updated_at.timestamp()).encode("utf-8"),
+        )
+
+        return response
 
     @auth("authenticated")
     @delete("/{ledger_id}/{commodity_id}")
@@ -74,18 +89,32 @@ class Commodities(APIController):
         ledger_id: UUID7,
         commodity_id: UUID7,
         commodity: UpdateCommodity,
-    ):
+        etag: IfMatch | None = None,
+    ) -> Annotated[Response, Commodity]:
         """Update commodity.
 
         Update selected commodity in the ledger.
         """
-        await commodities.update_ledger_commodity(
+        try:
+            updated_at = (
+                # pendulum.from_format(if_unmodified_since.value, "ddd, DD MMM YYYY HH:mm:ss z")
+                pendulum.from_timestamp(float(etag.value)) if etag else None
+            )
+        except ValueError:
+            updated_at = None
+            logger.debug("Failed to parse ETag header: %s", etag.value if etag else "None")
+
+        updated_commodity = await commodities.update_one(
             ledger_id=ledger_id,
             commodity_id=commodity_id,
-            commodity_updated_at=UpdateCommodity.updated_at,
-            commodity_code=commodity.code,
-            commodity_name=commodity.name,
-            commodity_symbol=commodity.symbol,
-            commodity_subunit=commodity.subunit,
-            commodity_no_market=commodity.no_market,
+            data=commodity,
+            updated_at=updated_at,
         )
+
+        response = json(commodity)
+        response.add_header(
+            b"ETag",
+            str(updated_commodity.updated_at.timestamp()).encode("utf-8"),
+        )
+
+        return response

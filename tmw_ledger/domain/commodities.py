@@ -8,6 +8,7 @@ from essentials.exceptions import ConflictException, ObjectNotFound
 from pydantic import UUID7, BaseModel, ConfigDict, TypeAdapter
 from pymongo.errors import DuplicateKeyError
 
+from tmw_ledger.core.exeptions import PreconditionFailed
 from tmw_ledger.core.services import add_service
 from tmw_ledger.domain.types.commodity import (
     CommodityCode,
@@ -51,8 +52,6 @@ class UpdateCommodity(BaseModel):
     symbol: CommoditySymbol | None
     subunit: CommoditySubunit | None
     no_market: CommodityIsOnMarket | None
-
-    updated_at: CommodityUpdatedAt
 
 
 @add_service(scope="scoped")
@@ -110,55 +109,35 @@ class CommoditiesDAL:
         ).to_list()
         return TypeAdapter(list[Commodity]).validate_python(commodities)
 
-    async def update_by_id(
-        self,
-        commodity_id: CommodityUUID,
-        update_commodity: UpdateCommodity,
-    ) -> Commodity:
-        new_data = update_commodity.model_dump(exclude_unset=True, exclude={"id", "updated_at"})
-        if not new_data:
-            raise ValueError("No data to update")
-
-        try:
-            commodity = await CommodityModel.find_one(
-                CommodityModel.id == commodity_id,
-                CommodityModel.deleted_at == None,  # noqa E711
-                CommodityModel.updated_at == update_commodity.updated_at,
-            ).update_one(
-                Set(new_data),
-            )
-        except DuplicateKeyError as e:
-            raise ConflictException("Duplicate commodity with the same code for the ledger already exists") from e
-
-        if commodity is None:
-            raise ObjectNotFound
-
-        return await self.get_by_id(commodity_id)
-
     async def update_ledger_commodity(
         self,
         ledger_id: LedgerUUID,
         commodity_id: CommodityUUID,
-        update_commodity: UpdateCommodity,
+        data: UpdateCommodity,
+        updated_at: pendulum.DateTime | None = None,
     ) -> Commodity:
-        new_data = update_commodity.model_dump(exclude_unset=True, exclude={"id", "updated_at"})
+        new_data = data.model_dump(exclude_unset=True, exclude={"id", "updated_at"})
         if not new_data:
             raise ValueError("No data to update")
 
-        try:
-            commodity = await CommodityModel.find_one(
-                CommodityModel.id == commodity_id,
-                CommodityModel.ledger_id == ledger_id,
-                CommodityModel.deleted_at == None,  # noqa E711
-                CommodityModel.updated_at == update_commodity.updated_at,
-            ).update_one(
-                Set(update_commodity.dict(exclude_unset=True)),
-            )
-        except DuplicateKeyError as e:
-            raise ConflictException("Duplicate commodity with the same code for the ledger already exists") from e
-
+        commodity = await CommodityModel.find_one(
+            CommodityModel.id == commodity_id,
+            CommodityModel.ledger_id == ledger_id,
+            CommodityModel.deleted_at == None,  # noqa E711
+        )
         if commodity is None:
             raise ObjectNotFound
+
+        if updated_at and pendulum.instance(commodity.updated_at) > updated_at:
+            raise PreconditionFailed(f"Commodity has been modified since {updated_at}")
+
+        update_data = data.model_dump(exclude_unset=True)
+        update_data["updated_at"] = pendulum.now("UTC")
+
+        try:
+            await commodity.update(Set(update_data))
+        except DuplicateKeyError as e:
+            raise ConflictException("Duplicate commodity with the same code for the ledger already exists") from e
 
         return await self.get_by_id(commodity_id)
 
@@ -185,61 +164,31 @@ class CommoditiesBL:
 
     async def create(
         self,
+        ledger_id: UUID7,
         commodity_name: str,
         commodity_code: str,
-        commodity_symbol: str | None,
         commodity_subunit: int,
-        ledger_id: UUID7,
+        commodity_symbol: str | None,
+        commodity_no_market: bool = False,
     ) -> Commodity:
         new_commodity = NewCommodity(
             name=commodity_name,
             code=commodity_code,
             symbol=commodity_symbol,
             subunit=commodity_subunit,
+            no_market=commodity_no_market,
             ledger_id=ledger_id,
         )
         return await self.dal.create(new_commodity)
 
-    async def update_by_id(
-        self,
-        commodity_id: UUID7,
-        commodity_updated_at: datetime,
-        commodity_name: str | None,
-        commodity_code: str | None,
-        commodity_symbol: str | None,
-        commodity_subunit: int | None,
-        commodity_no_market: bool | None,
-    ) -> Commodity:
-        update_commodity = UpdateCommodity(
-            name=commodity_name,
-            code=commodity_code,
-            symbol=commodity_symbol,
-            subunit=commodity_subunit,
-            no_market=commodity_no_market,
-            updated_at=commodity_updated_at,
-        )
-        return await self.dal.update_by_id(commodity_id, update_commodity)
-
-    async def update_ledger_commodity(
+    async def update_one(
         self,
         ledger_id: UUID7,
         commodity_id: UUID7,
-        commodity_updated_at: datetime,
-        commodity_name: str | None,
-        commodity_code: str | None,
-        commodity_symbol: str | None,
-        commodity_subunit: int | None,
-        commodity_no_market: bool | None,
+        data: UpdateCommodity,
+        updated_at: pendulum.DateTime | None = None,
     ) -> Commodity:
-        update_commodity = UpdateCommodity(
-            name=commodity_name,
-            code=commodity_code,
-            symbol=commodity_symbol,
-            subunit=commodity_subunit,
-            no_market=commodity_no_market,
-            updated_at=commodity_updated_at,
-        )
-        return await self.dal.update_ledger_commodity(ledger_id, commodity_id, update_commodity)
+        return await self.dal.update_ledger_commodity(ledger_id, commodity_id, data, updated_at)
 
     async def get_ledger_commodities(self, ledger_id: UUID7) -> list[Commodity]:
         return await self.dal.get_ledger_commodities(ledger_id=ledger_id)

@@ -1,5 +1,7 @@
 """Ledger API controller module."""
 
+from typing import Annotated
+
 import pendulum
 from blacksheep import Response, json
 from blacksheep.server.authorization import auth
@@ -16,6 +18,7 @@ class Ledgers(APIController):
 
     @classmethod
     def version(cls) -> str:
+        """Return API version."""
         return "v1"
 
     @auth("authenticated")
@@ -34,7 +37,7 @@ class Ledgers(APIController):
         self,
         ledgers: LedgersBL,
         ledger_id: UUID7,
-    ) -> Ledger:
+    ) -> Annotated[Response, Ledger]:
         """Get a single ledger by ID."""
         ledger = await ledgers.get_one(ledger_id)
         response = json(ledger)
@@ -50,7 +53,7 @@ class Ledgers(APIController):
         self,
         ledgers: LedgersBL,
         new_ledger: NewLedger,
-    ) -> Ledger:
+    ) -> Annotated[Response, Ledger]:
         """Create a new ledger."""
         ledger = await ledgers.create(new_ledger.name, new_ledger.description)
         response = json(ledger)
@@ -68,7 +71,7 @@ class Ledgers(APIController):
         ledger_id: UUID7,
         updated_ledger: UpdateLedger,
         etag: IfMatch | None = None,
-    ) -> Ledger:
+    ) -> Annotated[Response, Ledger]:
         """Update ledger."""
         try:
             updated_at = (
@@ -76,6 +79,7 @@ class Ledgers(APIController):
                 pendulum.from_timestamp(float(etag.value)) if etag else None
             )
         except ValueError:
+            updated_at = None
             logger.debug("Failed to parse ETag header: %s", etag.value if etag else "None")
 
         ledger = await ledgers.update_one(

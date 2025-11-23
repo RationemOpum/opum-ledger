@@ -1,3 +1,4 @@
+# ruff: noqa: S101, D100, D101, D102, D103
 import asyncio
 
 import pytest
@@ -412,7 +413,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         update_path = self._endpoint(f"/{ledger_id}")
         update_response = await api_client.put(
             update_path,
-            headers={"If-Match": etag[0].decode("utf-8")},
+            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore[reportUnknownVariableType] due to bug in heders.pyi
             content=JSONContent(
                 data={
                     "name": "IUS Success Updated",
@@ -426,8 +427,8 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert updated_ledger["id"] == ledger_id
         assert updated_ledger["name"] == "IUS Success Updated"
 
-    async def test_update_ledger_if_unmodified_since_conflict(self, api_client: TestClient):
-        """Test update fails with 412 when ledger was modified after the provided If-Unmodified-Since."""
+    async def test_update_ledger_if_match_conflict(self, api_client: TestClient):
+        """Test update fails with 412 when ledger was modified after the provided If-Match."""
         path = self._endpoint("/")
 
         # Create a ledger first
@@ -443,7 +444,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert create_response.status == 200
         created_ledger = await create_response.json()
         ledger_id = created_ledger["id"]
-        etag = create_response.headers.get(b"ETag")
+        etag: str = create_response.headers.get(b"ETag")[0].decode("utf-8")  # type: ignore[reportUnknownVariableType] due to bug in heders.pyi
 
         # Perform another update to advance the ledger's updated_at (simulate another client)
         update_path = self._endpoint(f"/{ledger_id}")
@@ -457,12 +458,13 @@ class TestLedgerEndpoints(BaseTestEndpoints):
             ),
         )
         assert first_update_response.status == 200
-        assert first_update_response.headers.get(b"ETag") != etag  # ETag should have changed
+        # ETag should have changed
+        assert first_update_response.headers.get(b"ETag")[0].decode("utf-8") != etag  # type: ignore[reportUnknownVariableType] due to bug in heders.pyi
 
         # Attempt update with stale If-Unmodified-Since header — should fail with 412
         conflict_update_response = await api_client.put(
             update_path,
-            headers={"If-Match": etag[0].decode("utf-8")},
+            headers={"If-Match": etag},
             content=JSONContent(
                 data={
                     "name": "IUS Conflict Attempt",
