@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from typing import Annotated, TypeAlias
-from uuid import uuid7
 
 from pydantic import UUID7, Field
 

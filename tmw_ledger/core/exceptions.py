@@ -1,4 +1,4 @@
-"""Module defining custom exceptions for the TMW Ledge."""
+"""Module defining custom exceptions for the TMW Ledger."""
 
 
 class PreconditionFailed(Exception):

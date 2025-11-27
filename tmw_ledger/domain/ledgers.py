@@ -5,11 +5,10 @@ import pendulum
 from beanie.odm.operators.update.general import Set
 from essentials.exceptions import ConflictException, ObjectNotFound
 from pendulum import DateTime
-from pydantic import UUID7, BaseModel, ConfigDict, Field
-from pymongo import DESCENDING
+from pydantic import UUID7, BaseModel, ConfigDict
 from pymongo.errors import DuplicateKeyError
 
-from tmw_ledger.core.exeptions import PreconditionFailed
+from tmw_ledger.core.exceptions import PreconditionFailed
 from tmw_ledger.core.services import add_service
 from tmw_ledger.domain.types.ledger import LedgerCreatedAt, LedgerDescription, LedgerName, LedgerUpdatedAt, LedgerUUID
 from tmw_ledger.models.ledger import LedgerModel

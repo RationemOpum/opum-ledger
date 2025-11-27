@@ -14,7 +14,7 @@ from essentials.exceptions import (
 )
 from pydantic import ValidationError
 
-from tmw_ledger.core.exeptions import PreconditionFailed
+from tmw_ledger.core.exceptions import PreconditionFailed
 from tmw_ledger.core.logging import logger
 
 

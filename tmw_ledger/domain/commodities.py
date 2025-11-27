@@ -1,5 +1,4 @@
-from datetime import datetime
-from typing import ClassVar, final
+from typing import ClassVar
 from uuid import uuid7
 
 import pendulum
@@ -8,7 +7,7 @@ from essentials.exceptions import ConflictException, ObjectNotFound
 from pydantic import UUID7, BaseModel, ConfigDict, TypeAdapter
 from pymongo.errors import DuplicateKeyError
 
-from tmw_ledger.core.exeptions import PreconditionFailed
+from tmw_ledger.core.exceptions import PreconditionFailed
 from tmw_ledger.core.services import add_service
 from tmw_ledger.domain.types.commodity import (
     CommodityCode,
