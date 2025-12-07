@@ -6,6 +6,24 @@ from pytest_mongo import factories
 from tests.fixtures.api_client import (
     api_client,  # noqa: F401
 )
+from tests.fixtures.common import (  # noqa: F401
+    account_assets_bank_ledger_two,
+    account_assets_cash_eur_ledger_one,
+    account_assets_cash_ledger_one,
+    account_assets_cash_usd_ledger_one,
+    account_expenses_food_ledger_one,
+    account_expenses_groceries_ledger_one,
+    account_expenses_rent_ledger_one,
+    account_expenses_transport_ledger_two,
+    account_incomes_salary_ledger_one,
+    account_liabilities_creditcard_ledger_two,
+    commodity_eur_ledger_one,
+    commodity_gbp_ledger_two,
+    commodity_usd_ledger_one,
+    commodity_usd_ledger_two,
+    ledger_one,
+    ledger_two,
+)
 from tmw_ledger.settings import Settings, load_settings
 
 mongo_proc = factories.mongo_proc()

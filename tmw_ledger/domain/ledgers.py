@@ -91,6 +91,9 @@ class LedgersDAL:
 
         return await self.get_one(ledger_id)
 
+    async def exists(self, ledger_id: UUID7) -> bool:
+        return await LedgerModel.find(LedgerModel.id == ledger_id).exists()
+
 
 @add_service(scope="scoped")
 class LedgersBL:
@@ -115,6 +118,9 @@ class LedgersBL:
 
     async def get_one(self, id_: UUID7) -> Ledger:
         return await self.dal.get_one(id_)
+
+    async def exists(self, ledger_id: UUID7) -> bool:
+        return await self.dal.exists(ledger_id)
 
     async def update_one(
         self,

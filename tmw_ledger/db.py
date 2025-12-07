@@ -5,12 +5,14 @@ from pymongo import AsyncMongoClient
 from tmw_ledger.models.commodities import CommodityModel
 from tmw_ledger.models.ledger import LedgerModel
 from tmw_ledger.models.accounts import AccountModel
+from tmw_ledger.models.transactions import TransactionModel
 from tmw_ledger.settings import Settings
 
 DOCUMENT_MODELS: list[type[Document]] = [
     CommodityModel,
     LedgerModel,
     AccountModel,
+    TransactionModel,
 ]
 
 
@@ -26,11 +28,13 @@ async def init_db(settings: Settings) -> AsyncMongoClient:
         client = AsyncMongoClient(
             f"{driver}://{user}:{password}@{host}:{port}/{database}",
             uuidRepresentation="standard",
+            tz_aware=True,
         )
     else:
         client = AsyncMongoClient(
             f"{driver}://{host}:{port}/{database}",
             uuidRepresentation="standard",
+            tz_aware=True,
         )
 
     await init_beanie(
