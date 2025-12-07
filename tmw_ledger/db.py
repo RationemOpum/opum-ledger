@@ -2,9 +2,9 @@ from beanie import Document, init_beanie
 from blacksheep.server.application import Application
 from pymongo import AsyncMongoClient
 
+from tmw_ledger.models.accounts import AccountModel
 from tmw_ledger.models.commodities import CommodityModel
 from tmw_ledger.models.ledger import LedgerModel
-from tmw_ledger.models.accounts import AccountModel
 from tmw_ledger.models.transactions import TransactionModel
 from tmw_ledger.settings import Settings
 
@@ -20,18 +20,18 @@ async def init_db(settings: Settings) -> AsyncMongoClient:
     # Create Motor client
     driver: str = settings.db.driver
     host: str = settings.db.host
-    user: str = settings.db.user
-    password: str = settings.db.password
+    user: str | None = settings.db.user
+    password: str | None = settings.db.password
     port: int = settings.db.port
     database: str = settings.db.database
     if user and password:
-        client = AsyncMongoClient(
+        client: AsyncMongoClient = AsyncMongoClient(
             f"{driver}://{user}:{password}@{host}:{port}/{database}",
             uuidRepresentation="standard",
             tz_aware=True,
         )
     else:
-        client = AsyncMongoClient(
+        client: AsyncMongoClient = AsyncMongoClient(
             f"{driver}://{host}:{port}/{database}",
             uuidRepresentation="standard",
             tz_aware=True,

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  ledger-service:
+    hostname: ledger
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trackmywealth-ledger
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./settings.yaml:/app/settings.yaml:ro
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    networks:
+      - trackmywealth
+
+  mongodb:
+    hostname: mongodb
+    image: mongo:8
+    container_name: trackmywealth-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: ledger
+    volumes:
+      - mongodb_data:/data/db
+      - ./docker/mongo-entrypoint/:/docker-entrypoint-initdb.d/:ro
+    restart: unless-stopped
+    networks:
+      - trackmywealth
+
+volumes:
+  mongodb_data:
+
+networks:
+  trackmywealth:
+    driver: bridge
