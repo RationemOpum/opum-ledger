@@ -1,4 +1,5 @@
 from pydantic import Field
+from pymongo import IndexModel
 
 from tmw_ledger.domain.types.ledger import LedgerUUID
 from tmw_ledger.domain.types.transaction import (
@@ -23,3 +24,8 @@ class TransactionModel(BaseAppModel):
 
     class Settings:
         name = "transactions"
+        indexes: list[IndexModel] = [
+            IndexModel(["ledger_id", "date_time"]),
+            IndexModel(["ledger_id", "tags"]),
+            IndexModel(["ledger_id", "details.account_id"]),
+        ]
