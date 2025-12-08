@@ -13,10 +13,10 @@ By using this project or its source code, for any purpose and in any shape or fo
 
 ## Features
 
-- [ ] Ledgers
-- [ ] Currencies
-- [ ] Accounts
-- [ ] Categories
+- [x] Ledgers
+- [x] Commodities (Currencies)
+- [x] Accounts (Categories)
+- [x] Transactions
 - [ ] Tags
 - [ ] Balance reports
 - [ ] Balance sheet
