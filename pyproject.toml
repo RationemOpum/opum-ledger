@@ -2,20 +2,22 @@
 name = "trackmywealth-ledger"
 version = "0.1.0"
 description = "Track My Wealth Ledger Backend Service"
-authors = ["Dmytro Tyzhnenko <t.dmitry@gmail.com>"]
+authors = [{ name = "Dmytro Tyzhnenko", email = "t.dmitry@gmail.com" }]
+maintainers = [{ name = "Dmytro Tyzhnenko", email = "t.dmitry@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.14"
-packages = [{ include = "tmw_ledger" }]
+license = "MIT"
+license-files = ["LICENSE"]
 
 dependencies = [
     "beanie>=2.0.0",
     "blacksheep[full]>=2.4.2",
     "email-validator>=2.3.0",
-    "essentials-configuration[yaml]>=2.0.4",
+    "essentials-configuration[yaml]>=2.0.5",
     "essentials-openapi[full]>=1.2.1",
-    "orjson>=3.11.3",
+    "orjson>=3.11.5",
     "pendulum>=3.1.0",
-    "pydantic>=2.12.0",
+    "pydantic>=2.12.5",
     "uvicorn>=0.37.0",
     "uvloop>=0.21.0",
 ]
@@ -31,6 +33,14 @@ dev = [
     "pytest-mongo>=3.2.1",
     "ruff>=0.13.3",
 ]
+
+[build-system]
+requires = ["uv_build>=0.9.0,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "tmw_ledger"
+module-root = ""
 
 [tool.ruff]
 line-length = 120
