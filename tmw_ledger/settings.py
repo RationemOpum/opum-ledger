@@ -17,7 +17,8 @@ class APIInfo(BaseModel):
 
 
 class Auth(BaseModel):
-    x_api_key: str = "secret"
+    rw_x_api_key: str = "secret"
+    ro_x_api_key: str = "secret"
 
 
 class Database(BaseModel):

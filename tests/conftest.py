@@ -5,6 +5,7 @@ from pytest_mongo import factories
 
 from tests.fixtures.api_client import (
     api_client,  # noqa: F401
+    api_client_ro,  # noqa: F401
 )
 from tests.fixtures.common import (  # noqa: F401
     account_assets_bank_ledger_two,

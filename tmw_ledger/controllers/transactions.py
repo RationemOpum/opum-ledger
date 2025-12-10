@@ -42,7 +42,7 @@ class Transactions(APIController):
         """Show API version."""
         return "v1"
 
-    @auth("authenticated")
+    @auth(roles=["reader"])
     @get("/{ledger_id}")
     async def get_transactions(
         self,
@@ -80,7 +80,7 @@ class Transactions(APIController):
             count=count,
         )
 
-    @auth("authenticated")
+    @auth(roles=["reader"])
     @get("/{ledger_id}/{transaction_id}")
     async def get_transaction(
         self,
@@ -102,7 +102,7 @@ class Transactions(APIController):
 
         return response
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @post("/{ledger_id}")
     async def add_transaction(
         self,
@@ -131,7 +131,7 @@ class Transactions(APIController):
 
         return response
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @put("/{ledger_id}/{transaction_id}")
     async def update_transaction(
         self,
@@ -166,7 +166,7 @@ class Transactions(APIController):
 
         return response
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @delete("/{ledger_id}/{transaction_id}")
     async def delete_transaction(
         self,

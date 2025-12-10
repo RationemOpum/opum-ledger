@@ -13,7 +13,7 @@ def configure_docs(app: Application, settings: Settings):
             version=settings.info.version,
             description=settings.info.description,
         ),
-        anonymous_access=False,
+        anonymous_access=True,
         security_schemes={"ApiKeyAuth": APIKeySecurity(name="x-api-key", in_=ParameterLocation.HEADER)},
     )
 

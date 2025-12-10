@@ -20,7 +20,7 @@ class Commodities(APIController):
     def version(cls) -> str:
         return "v1"
 
-    @auth("authenticated")
+    @auth(roles=["reader"])
     @get("/{ledger_id}")
     async def get_commodities(
         self,
@@ -34,7 +34,7 @@ class Commodities(APIController):
         partnership_commodities: list[Commodity] = await commodities.get_ledger_commodities(ledger_id)
         return partnership_commodities
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @post("/{ledger_id}")
     async def add_commodity(
         self,
@@ -63,7 +63,7 @@ class Commodities(APIController):
 
         return response
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @delete("/{ledger_id}/{commodity_id}")
     async def delete_commodity(
         self,
@@ -81,7 +81,7 @@ class Commodities(APIController):
             commodity_id=commodity_id,
         )
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @put("/{ledger_id}/{commodity_id}")
     async def update_commodity(
         self,

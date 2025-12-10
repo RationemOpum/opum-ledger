@@ -5,6 +5,7 @@ from blacksheep import Application
 from blacksheep.server.diagnostics import get_diagnostic_app
 from rodi import Container
 
+from tmw_ledger.core.auth import use_auth
 from tmw_ledger.core.docs import configure_docs
 from tmw_ledger.core.errors import configure_error_handlers
 from tmw_ledger.core.json import use_orjson
@@ -25,6 +26,7 @@ def configure_application(
         show_error_details=settings.app.show_error_details,
     )
 
+    use_auth(app, settings)
     use_beanie(app, settings)
 
     app.use_cors(  # pyright: ignore[reportUnusedCallResult]

@@ -1,6 +1,6 @@
 """Health check API controller module."""
 
-from blacksheep import json
+from blacksheep import allow_anonymous, json
 from blacksheep.server.controllers import APIController, get
 
 
@@ -17,6 +17,7 @@ class Health(APIController):
         """No versioning for health endpoint."""
         return ""
 
+    @allow_anonymous
     @get("/healthz")
     async def health_check(self):
         """Health check endpoint.

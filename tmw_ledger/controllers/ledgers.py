@@ -21,7 +21,7 @@ class Ledgers(APIController):
         """Return API version."""
         return "v1"
 
-    @auth("authenticated")
+    @auth(roles=["reader"])
     @get("/")
     async def get_all(
         self,
@@ -31,7 +31,7 @@ class Ledgers(APIController):
         all_ledgers = await ledgers.get_all()
         return all_ledgers
 
-    @auth("authenticated")
+    @auth(roles=["reader"])
     @get("/{ledger_id}")
     async def get_one(
         self,
@@ -47,7 +47,7 @@ class Ledgers(APIController):
         )
         return response
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @post("/")
     async def create(
         self,
@@ -63,7 +63,7 @@ class Ledgers(APIController):
         )
         return response
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @put("/{ledger_id}")
     async def update_one(
         self,

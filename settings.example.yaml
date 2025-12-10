@@ -18,7 +18,8 @@ app:
     static_path: /static
 
 auth:
-  x_api_key: "your_api_key_here"
+  rw_x_api_key: "your_rw_api_key_here"
+  ro_x_api_key: "your_ro_api_key_here"
 
 # database settings
 db:

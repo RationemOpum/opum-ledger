@@ -33,7 +33,7 @@ class Accounts(APIController):
     def version(cls) -> str:
         return "v1"
 
-    @auth("authenticated")
+    @auth(roles=["reader"])
     @get("/{ledger_id}")
     async def get_accounts(
         self,
@@ -47,7 +47,7 @@ class Accounts(APIController):
         ledger_accounts = await accounts.get_ledger_accounts(ledger_id)
         return AccountsResponse(accounts=ledger_accounts)
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @post("/{ledger_id}")
     async def add_account(
         self,
@@ -75,7 +75,7 @@ class Accounts(APIController):
 
         return response
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @delete("/{ledger_id}/{account_id}")
     async def delete_account(
         self,
@@ -104,7 +104,7 @@ class Accounts(APIController):
         )
         # TODO: Should be a close balance transaction here?
 
-    @auth("authenticated")
+    @auth(roles=["reader"])
     @get("/{ledger_id}/{account_id}")
     async def get_account(
         self,
@@ -121,7 +121,7 @@ class Accounts(APIController):
             account_id=account_id,
         )
 
-    @auth("authenticated")
+    @auth(roles=["writer"])
     @put("/{ledger_id}/{account_id}")
     async def update_account(
         self,
@@ -156,7 +156,7 @@ class Accounts(APIController):
 
         return response
 
-    @auth("authenticated")
+    @auth(roles=["reader"])
     @get("/tree/{ledger_id}")
     async def get_accounts_tree(
         self,
