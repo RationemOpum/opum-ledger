@@ -1,11 +1,13 @@
 from typing import ClassVar
 from uuid import uuid7
 
+from beanie import UpdateResponse
 import pendulum
 from beanie.odm.operators.update.general import Set
 from essentials.exceptions import ConflictException, ObjectNotFound
 from pydantic import UUID7, BaseModel, ConfigDict, TypeAdapter
 from pymongo.errors import DuplicateKeyError
+from pymongo.results import UpdateResult
 
 from tmw_ledger.core.exceptions import PreconditionFailed
 from tmw_ledger.core.services import add_service
@@ -55,7 +57,7 @@ class UpdateCommodity(BaseModel):
 
 @add_service(scope="scoped")
 class CommoditiesDAL:
-    async def create(
+    async def create_commodity(
         self,
         new_commodity: NewCommodity,
     ) -> Commodity:
@@ -76,7 +78,7 @@ class CommoditiesDAL:
 
         return Commodity.model_validate(commodity)
 
-    async def get_by_id(self, commodity_id: CommodityUUID) -> Commodity:
+    async def get_commodity(self, commodity_id: CommodityUUID) -> Commodity:
         commodity = await CommodityModel.find_one(
             CommodityModel.id == commodity_id,
             CommodityModel.deleted_at == None,  # noqa E711
@@ -86,7 +88,7 @@ class CommoditiesDAL:
 
         return Commodity.model_validate(commodity)
 
-    async def get_ledger_commodity_by_id(
+    async def get_ledger_commodity(
         self,
         ledger_id: LedgerUUID,
         commodity_id: CommodityUUID,
@@ -115,15 +117,16 @@ class CommoditiesDAL:
         data: UpdateCommodity,
         updated_at: pendulum.DateTime | None = None,
     ) -> Commodity:
-        new_data = data.model_dump(exclude_unset=True, exclude={"id", "updated_at"})
+        new_data = data.model_dump(exclude_unset=True)
         if not new_data:
             raise ValueError("No data to update")
 
-        commodity = await CommodityModel.find_one(
+        commodity_query = CommodityModel.find_one(
             CommodityModel.id == commodity_id,
             CommodityModel.ledger_id == ledger_id,
             CommodityModel.deleted_at == None,  # noqa E711
         )
+        commodity = await commodity_query
         if commodity is None:
             raise ObjectNotFound
 
@@ -133,14 +136,23 @@ class CommoditiesDAL:
         update_data = data.model_dump(exclude_unset=True)
         update_data["updated_at"] = pendulum.now("UTC")
 
+        if updated_at is not None:
+            commodity_query = commodity_query.find_one(CommodityModel.updated_at == updated_at)
+
         try:
-            await commodity.update(Set(update_data))
+            commodity_update_result: UpdateResult = await commodity_query.update(  # pyright: ignore[reportGeneralTypeIssues]
+                Set(update_data),
+                response_type=UpdateResponse.UPDATE_RESULT,
+            )
         except DuplicateKeyError as e:
             raise ConflictException("Duplicate commodity with the same code for the ledger already exists") from e
 
-        return await self.get_by_id(commodity_id)
+        if commodity_update_result.modified_count == 0:
+            raise PreconditionFailed(f"Commodity has been modified since {updated_at}")
 
-    async def delete_ledger_commodity_by_id(
+        return await self.get_commodity(commodity_id)
+
+    async def delete_ledger_commodity(
         self,
         ledger_id: LedgerUUID,
         commodity_id: CommodityUUID,
@@ -178,7 +190,7 @@ class CommoditiesBL:
             no_market=commodity_no_market,
             ledger_id=ledger_id,
         )
-        return await self.dal.create(new_commodity)
+        return await self.dal.create_commodity(new_commodity)
 
     async def update_one(
         self,
@@ -197,7 +209,7 @@ class CommoditiesBL:
         ledger_id: UUID7,
         commodity_id: UUID7,
     ):
-        await self.dal.delete_ledger_commodity_by_id(
+        await self.dal.delete_ledger_commodity(
             ledger_id=ledger_id,
             commodity_id=commodity_id,
         )

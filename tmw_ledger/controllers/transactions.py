@@ -151,7 +151,7 @@ class Transactions(APIController):
             updated_at = None
             logger.debug("Failed to parse ETag header: %s", etag.value if etag else "None")
 
-        updated_transaction = await transactions.update_transaction(
+        updated_transaction = await transactions.update_ledger_transaction(
             ledger_id=ledger_id,
             transaction_id=transaction_id,
             data=update_transaction,

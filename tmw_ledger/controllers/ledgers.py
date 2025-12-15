@@ -23,23 +23,23 @@ class Ledgers(APIController):
 
     @auth(roles=["reader"])
     @get("/")
-    async def get_all(
+    async def get_ledgers(
         self,
         ledgers: LedgersBL,
     ) -> list[Ledger]:
         """Get ledgers."""
-        all_ledgers = await ledgers.get_all()
+        all_ledgers = await ledgers.get_ledgers()
         return all_ledgers
 
     @auth(roles=["reader"])
     @get("/{ledger_id}")
-    async def get_one(
+    async def get_ledger(
         self,
         ledgers: LedgersBL,
         ledger_id: UUID7,
     ) -> Annotated[Response, Ledger]:
         """Get a single ledger by ID."""
-        ledger = await ledgers.get_one(ledger_id)
+        ledger = await ledgers.get_ledger(ledger_id)
         response = json(ledger)
         response.add_header(
             b"ETag",
@@ -49,13 +49,13 @@ class Ledgers(APIController):
 
     @auth(roles=["writer"])
     @post("/")
-    async def create(
+    async def create_ledger(
         self,
         ledgers: LedgersBL,
         new_ledger: NewLedger,
     ) -> Annotated[Response, Ledger]:
         """Create a new ledger."""
-        ledger = await ledgers.create(new_ledger.name, new_ledger.description)
+        ledger = await ledgers.create_ledger(new_ledger.name, new_ledger.description)
         response = json(ledger)
         response.add_header(
             b"ETag",
@@ -65,7 +65,7 @@ class Ledgers(APIController):
 
     @auth(roles=["writer"])
     @put("/{ledger_id}")
-    async def update_one(
+    async def update_ledger(
         self,
         ledgers: LedgersBL,
         ledger_id: UUID7,
@@ -82,7 +82,7 @@ class Ledgers(APIController):
             updated_at = None
             logger.debug("Failed to parse ETag header: %s", etag.value if etag else "None")
 
-        ledger = await ledgers.update_one(
+        ledger = await ledgers.update_ledger(
             ledger_id,
             updated_ledger,
             updated_at=updated_at,

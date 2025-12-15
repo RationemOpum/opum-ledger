@@ -5,12 +5,14 @@ from datetime import datetime
 from uuid import uuid7
 
 import pendulum
+from beanie import UpdateResponse
 from beanie.odm.operators.find.comparison import In
 from beanie.odm.operators.update.general import Set
 from beanie.odm.queries.find import FindMany
 from essentials.exceptions import ConflictException, ObjectNotFound
 from pydantic import BaseModel, ConfigDict, TypeAdapter, field_validator, model_validator
 from pymongo.errors import DuplicateKeyError
+from pymongo.results import UpdateResult
 
 from tmw_ledger.core.exceptions import PreconditionFailed
 from tmw_ledger.core.services import add_service
@@ -80,7 +82,7 @@ class AccountUpdate(BaseModel):
 class AccountsDAL:
     __model__ = AccountModel
 
-    async def create(
+    async def create_account(
         self,
         ledger_id: LedgerUUID,
         new_account: NewAccount,
@@ -144,11 +146,12 @@ class AccountsDAL:
         updated_account: AccountUpdate,
         updated_at: pendulum.DateTime | None = None,
     ) -> Account:
-        account = await AccountModel.find_one(
+        account_query = AccountModel.find_one(
             AccountModel.id == account_id,
             AccountModel.ledger_id == ledger_id,
             AccountModel.deleted_at == None,  # noqa E711
         )
+        account = await account_query
         if not account:
             raise ObjectNotFound
 
@@ -160,9 +163,19 @@ class AccountsDAL:
         if "path" in update_data:
             update_data["paths"] = AccountModel.parse_path(update_data["path"])
 
-        await account.update(
+        if updated_at is not None:
+            account_query = account_query.find_one(
+                AccountModel.updated_at == updated_at,
+            )
+
+        update_result: UpdateResult = await account_query.update(  # pyright: ignore[reportGeneralTypeIssues]
             Set(update_data),
+            response_type=UpdateResponse.UPDATE_RESULT,
         )
+
+        if update_result.matched_count == 0:
+            raise PreconditionFailed("Account has been modified since the provided timestamp.")
+
         return await self.get_by_id(account_id)
 
     async def delete_ledger_account(
@@ -171,20 +184,30 @@ class AccountsDAL:
         account_id: AccountUUID,
         updated_at: pendulum.DateTime | None = None,
     ):
-        account = await AccountModel.find_one(
+        account_query = AccountModel.find_one(
             AccountModel.id == account_id,
             AccountModel.ledger_id == ledger_id,
             AccountModel.deleted_at == None,  # noqa E711
         )
+        account = await account_query
         if not account:
             raise ObjectNotFound
 
         if updated_at and pendulum.instance(account.updated_at) > updated_at:
             raise PreconditionFailed("Account has been modified since the provided timestamp.")
 
-        await account.update(
+        if updated_at is not None:
+            account_query = account_query.find_one(
+                AccountModel.updated_at == updated_at,
+            )
+
+        account_update_result: UpdateResult = await account_query.update(  # pyright: ignore[reportGeneralTypeIssues]
             Set({"deleted_at": pendulum.now()}),
+            response_type=UpdateResponse.UPDATE_RESULT,
         )
+
+        if account_update_result.matched_count == 0:
+            raise PreconditionFailed("Account has been modified since the provided timestamp.")
 
 
 @add_service(scope="scoped")
@@ -192,12 +215,12 @@ class AccountsBL:
     def __init__(self, dal: AccountsDAL):
         self.dal: AccountsDAL = dal
 
-    async def create(
+    async def create_account(
         self,
         ledger_id: LedgerUUID,
         new_account: NewAccount,
     ) -> Account:
-        return await self.dal.create(
+        return await self.dal.create_account(
             ledger_id,
             new_account,
         )

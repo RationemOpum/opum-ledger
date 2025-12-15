@@ -59,7 +59,7 @@ class Accounts(APIController):
 
         Add a new account to the ledger.
         """
-        account = await accounts.create(
+        account = await accounts.create_account(
             ledger_id=ledger_id,
             new_account=new_account,
         )

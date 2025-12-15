@@ -1,8 +1,9 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any, Literal
 from uuid import uuid7
 
 import pendulum
+from beanie import UpdateResponse
 from beanie.odm.operators.find.array import All, ElemMatch
 from beanie.odm.operators.find.logical import Not
 from beanie.odm.operators.update.general import Set
@@ -12,6 +13,7 @@ from pydantic import (
     UUID7,
     TypeAdapter,
 )
+from pymongo.results import UpdateResult
 
 from tmw_ledger.core.exceptions import PreconditionFailed
 from tmw_ledger.core.services import add_service
@@ -204,11 +206,12 @@ class TransactionsDAL:
         data: UpdateTransaction,
         updated_at: pendulum.DateTime | None = None,
     ) -> Transaction:
-        transaction = await TransactionModel.find_one(
+        transaction_query = TransactionModel.find_one(
             TransactionModel.id == transaction_id,
             TransactionModel.ledger_id == ledger_id,
             TransactionModel.deleted_at == None,  # noqa E711
         )
+        transaction = await transaction_query
         if not transaction:
             raise ObjectNotFound("Transaction not found.")
 
@@ -218,7 +221,18 @@ class TransactionsDAL:
         update_data = data.model_dump(exclude_unset=True)
         update_data["updated_at"] = pendulum.now("UTC")
 
-        await transaction.update(Set(update_data))
+        if updated_at is not None:
+            transaction_query = transaction_query.find_one(
+                TransactionModel.updated_at == updated_at,
+            )
+
+        update_result: UpdateResult = await transaction_query.update(  # pyright: ignore[reportGeneralTypeIssues]
+            Set(update_data),
+            response_type=UpdateResponse.UPDATE_RESULT,
+        )
+
+        if update_result.matched_count == 0:
+            raise PreconditionFailed("Transaction has been modified since the provided timestamp.")
 
         return await self.get_transaction(transaction_id)
 
@@ -228,18 +242,30 @@ class TransactionsDAL:
         transaction_id: TransactionUUID,
         updated_at: pendulum.DateTime | None = None,
     ):
-        transaction = await TransactionModel.find_one(
+        transaction_query = TransactionModel.find_one(
             TransactionModel.id == transaction_id,
             TransactionModel.ledger_id == ledger_id,
             TransactionModel.deleted_at == None,  # noqa E711
         )
+        transaction = await transaction_query
         if not transaction:
             raise ObjectNotFound("Transaction not found.")
 
         if updated_at and pendulum.instance(transaction.updated_at) > updated_at:
             raise PreconditionFailed("Transaction has been modified since the provided timestamp.")
 
-        await transaction.update(Set({"deleted_at": pendulum.now("UTC")}))  # type: ignore
+        if updated_at is not None:
+            transaction_query = transaction_query.find_one(
+                TransactionModel.updated_at == updated_at,
+            )
+
+        update_result: UpdateResult = await transaction_query.update(  # pyright: ignore[reportGeneralTypeIssues]
+            Set({"deleted_at": pendulum.now("UTC")}),
+            response_type=UpdateResponse.UPDATE_RESULT,
+        )
+
+        if update_result.matched_count == 0:
+            raise PreconditionFailed("Transaction has been modified since the provided timestamp.")
 
     async def get_ledger_account_balance(
         self,
@@ -328,7 +354,7 @@ class TransactionsBL:
             new_transaction=new_transaction,
         )
 
-    async def update_transaction(
+    async def update_ledger_transaction(
         self,
         ledger_id: LedgerUUID,
         transaction_id: TransactionUUID,
