@@ -1,4 +1,5 @@
 import logging
+import os
 
 import pytest
 from pytest_mongo import factories
@@ -27,8 +28,11 @@ from tests.fixtures.common import (  # noqa: F401
     ledger_two,
 )
 
-mongo_proc = factories.mongo_proc()
-mongodb = factories.mongodb("mongo_proc")
+if os.environ.get("CI") == "true":
+    mongo_external = factories.mongodb("mongo_noproc")
+else:
+    mongo_proc = factories.mongo_proc()
+    mongodb = factories.mongodb("mongo_proc")
 
 logging.getLogger("pymongo").setLevel(logging.INFO)
 logging.getLogger("faker.factory").setLevel(logging.INFO)
