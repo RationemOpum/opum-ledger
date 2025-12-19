@@ -2,7 +2,7 @@ from blacksheep import Application
 from blacksheep.server.openapi.v3 import OpenAPIHandler
 from openapidocs.v3 import APIKeySecurity, Info, ParameterLocation
 
-from tmw_ledger.settings import Settings
+from opum_ledger.settings import Settings
 
 
 def configure_docs(app: Application, settings: Settings):

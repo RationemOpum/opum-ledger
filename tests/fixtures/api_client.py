@@ -214,7 +214,7 @@ class TestClient:
 
 
 async def make_api_client(extra_headers: HeadersType = None) -> TestClient:
-    from tmw_ledger.app import app
+    from opum_ledger.app import app
 
     await app.start()
 

@@ -1,7 +1,7 @@
 [project]
-name = "trackmywealth-ledger"
+name = "opum-ledger"
 version = "0.1.0"
-description = "Track My Wealth Ledger Backend Service"
+description = "Ledger Service"
 authors = [{ name = "Dmytro Tyzhnenko", email = "t.dmitry@gmail.com" }]
 maintainers = [{ name = "Dmytro Tyzhnenko", email = "t.dmitry@gmail.com" }]
 readme = "README.md"
@@ -40,7 +40,7 @@ requires = ["uv_build>=0.9.0,<0.10.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = "tmw_ledger"
+module-name = "opum_ledger"
 module-root = ""
 
 [tool.ruff]

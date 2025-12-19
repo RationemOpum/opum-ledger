@@ -2,11 +2,11 @@ from beanie import Document, init_beanie
 from blacksheep.server.application import Application
 from pymongo import AsyncMongoClient
 
-from tmw_ledger.models.accounts import AccountModel
-from tmw_ledger.models.commodities import CommodityModel
-from tmw_ledger.models.ledger import LedgerModel
-from tmw_ledger.models.transactions import TransactionModel
-from tmw_ledger.settings import Settings
+from opum_ledger.models.accounts import AccountModel
+from opum_ledger.models.commodities import CommodityModel
+from opum_ledger.models.ledger import LedgerModel
+from opum_ledger.models.transactions import TransactionModel
+from opum_ledger.settings import Settings
 
 DOCUMENT_MODELS: list[type[Document]] = [
     CommodityModel,

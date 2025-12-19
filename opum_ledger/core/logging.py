@@ -2,7 +2,7 @@
 
 import logging
 
-from tmw_ledger.settings import Settings
+from opum_ledger.settings import Settings
 
 logging.getLogger("pymongo").setLevel(logging.INFO)
 

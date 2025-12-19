@@ -10,13 +10,13 @@ from blacksheep.server.controllers import APIController, delete, get, post, put
 from essentials.exceptions import ObjectNotFound
 from pydantic import BaseModel
 
-from tmw_ledger.controllers.base import IfMatch
-from tmw_ledger.domain.ledgers import LedgersBL
-from tmw_ledger.domain.transactions import (
+from opum_ledger.controllers.base import IfMatch
+from opum_ledger.domain.ledgers import LedgersBL
+from opum_ledger.domain.transactions import (
     TransactionsBL,
 )
-from tmw_ledger.domain.types.ledger import LedgerUUID
-from tmw_ledger.domain.types.transaction import (
+from opum_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.domain.types.transaction import (
     NewTransaction,
     Transaction,
     TransactionOrdering,

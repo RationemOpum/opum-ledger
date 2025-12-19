@@ -1,6 +1,6 @@
 from pymongo import IndexModel
 
-from tmw_ledger.domain.types.commodity import (
+from opum_ledger.domain.types.commodity import (
     CommodityCode,
     CommodityIsOnMarket,
     CommodityName,
@@ -8,8 +8,8 @@ from tmw_ledger.domain.types.commodity import (
     CommoditySymbol,
     CommodityUUID,
 )
-from tmw_ledger.domain.types.ledger import LedgerUUID
-from tmw_ledger.models.base import BaseAppModel
+from opum_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.models.base import BaseAppModel
 
 
 class CommodityModel(BaseAppModel):

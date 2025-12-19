@@ -5,9 +5,9 @@ from typing import Annotated, TypeAlias
 
 from pydantic import UUID7, BaseModel, ConfigDict, Field, field_validator
 
-from tmw_ledger.domain.types.account import AccountUUID
-from tmw_ledger.domain.types.commodity import CommodityUUID
-from tmw_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.domain.types.account import AccountUUID
+from opum_ledger.domain.types.commodity import CommodityUUID
+from opum_ledger.domain.types.ledger import LedgerUUID
 
 
 class TransactionState(Enum):

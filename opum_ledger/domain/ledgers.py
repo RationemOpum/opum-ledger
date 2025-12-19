@@ -11,10 +11,10 @@ from pydantic import UUID7, BaseModel, ConfigDict
 from pymongo.errors import DuplicateKeyError
 from pymongo.results import UpdateResult
 
-from tmw_ledger.core.exceptions import PreconditionFailed
-from tmw_ledger.core.services import add_service
-from tmw_ledger.domain.types.ledger import LedgerCreatedAt, LedgerDescription, LedgerName, LedgerUpdatedAt, LedgerUUID
-from tmw_ledger.models.ledger import LedgerModel
+from opum_ledger.core.exceptions import PreconditionFailed
+from opum_ledger.core.services import add_service
+from opum_ledger.domain.types.ledger import LedgerCreatedAt, LedgerDescription, LedgerName, LedgerUpdatedAt, LedgerUUID
+from opum_ledger.models.ledger import LedgerModel
 
 
 class NewLedger(BaseModel):

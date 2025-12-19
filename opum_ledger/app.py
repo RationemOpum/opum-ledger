@@ -5,14 +5,14 @@ from blacksheep import Application
 from blacksheep.server.diagnostics import get_diagnostic_app
 from rodi import Container
 
-from tmw_ledger.core.auth import use_auth
-from tmw_ledger.core.docs import configure_docs
-from tmw_ledger.core.errors import configure_error_handlers
-from tmw_ledger.core.json import use_orjson
-from tmw_ledger.core.logging import config_logger
-from tmw_ledger.core.services import configure_services
-from tmw_ledger.db import use_beanie
-from tmw_ledger.settings import Settings, load_settings
+from opum_ledger.core.auth import use_auth
+from opum_ledger.core.docs import configure_docs
+from opum_ledger.core.errors import configure_error_handlers
+from opum_ledger.core.json import use_orjson
+from opum_ledger.core.logging import config_logger
+from opum_ledger.core.services import configure_services
+from opum_ledger.db import use_beanie
+from opum_ledger.settings import Settings, load_settings
 
 
 def configure_application(

@@ -11,7 +11,7 @@ from typing import Literal, TypeVar
 
 from rodi import Container
 
-from tmw_ledger.settings import Settings
+from opum_ledger.settings import Settings
 
 # Singleton container for services
 container = Container()

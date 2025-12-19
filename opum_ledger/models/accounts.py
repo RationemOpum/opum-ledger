@@ -1,9 +1,9 @@
 from pymongo import IndexModel
 
-from tmw_ledger.core.utils import split_path
-from tmw_ledger.domain.types.account import AccountName, AccountPath, AccountPaths, AccountUUID
-from tmw_ledger.domain.types.ledger import LedgerUUID
-from tmw_ledger.models.base import BaseAppModel
+from opum_ledger.core.utils import split_path
+from opum_ledger.domain.types.account import AccountName, AccountPath, AccountPaths, AccountUUID
+from opum_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.models.base import BaseAppModel
 
 
 class AccountModel(BaseAppModel):

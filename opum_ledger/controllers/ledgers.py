@@ -8,9 +8,9 @@ from blacksheep.server.authorization import auth
 from blacksheep.server.controllers import APIController, get, post, put
 from pydantic import UUID7
 
-from tmw_ledger.controllers.base import IfMatch
-from tmw_ledger.core.logging import logger
-from tmw_ledger.domain.ledgers import Ledger, LedgersBL, NewLedger, UpdateLedger
+from opum_ledger.controllers.base import IfMatch
+from opum_ledger.core.logging import logger
+from opum_ledger.domain.ledgers import Ledger, LedgersBL, NewLedger, UpdateLedger
 
 
 class Ledgers(APIController):

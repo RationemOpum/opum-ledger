@@ -6,10 +6,10 @@ from urllib.parse import quote
 from blacksheep import JSONContent
 from blacksheep.testing import TestClient
 
+from opum_ledger.domain.accounts import Account
+from opum_ledger.domain.commodities import Commodity
+from opum_ledger.domain.ledgers import Ledger
 from tests.base import BaseTestEndpoints
-from tmw_ledger.domain.accounts import Account
-from tmw_ledger.domain.commodities import Commodity
-from tmw_ledger.domain.ledgers import Ledger
 
 
 class TestTransactionsEndpoints(BaseTestEndpoints):

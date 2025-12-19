@@ -14,12 +14,12 @@ from pydantic import BaseModel, ConfigDict, TypeAdapter, field_validator, model_
 from pymongo.errors import DuplicateKeyError
 from pymongo.results import UpdateResult
 
-from tmw_ledger.core.exceptions import PreconditionFailed
-from tmw_ledger.core.services import add_service
-from tmw_ledger.core.utils import split_path
-from tmw_ledger.domain.types.account import AccountName, AccountPath, AccountUUID
-from tmw_ledger.domain.types.ledger import LedgerUUID
-from tmw_ledger.models.accounts import AccountModel
+from opum_ledger.core.exceptions import PreconditionFailed
+from opum_ledger.core.services import add_service
+from opum_ledger.core.utils import split_path
+from opum_ledger.domain.types.account import AccountName, AccountPath, AccountUUID
+from opum_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.models.accounts import AccountModel
 
 ROOT_PATH = [
     "Assets",

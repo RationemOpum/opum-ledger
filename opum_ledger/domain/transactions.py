@@ -15,12 +15,12 @@ from pydantic import (
 )
 from pymongo.results import UpdateResult
 
-from tmw_ledger.core.exceptions import PreconditionFailed
-from tmw_ledger.core.services import add_service
-from tmw_ledger.domain.accounts import AccountsBL
-from tmw_ledger.domain.types.account import AccountUUID
-from tmw_ledger.domain.types.ledger import LedgerUUID
-from tmw_ledger.domain.types.transaction import (
+from opum_ledger.core.exceptions import PreconditionFailed
+from opum_ledger.core.services import add_service
+from opum_ledger.domain.accounts import AccountsBL
+from opum_ledger.domain.types.account import AccountUUID
+from opum_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.domain.types.transaction import (
     AccountBalance,
     NewTransaction,
     Transaction,
@@ -29,7 +29,7 @@ from tmw_ledger.domain.types.transaction import (
     TransactionUUID,
     UpdateTransaction,
 )
-from tmw_ledger.models.transactions import TransactionModel
+from opum_ledger.models.transactions import TransactionModel
 
 
 @add_service(scope="scoped")

@@ -1,6 +1,6 @@
-# Track My Wealth – Ledger Service
+# Rationem Opum – Ledger Service
 
-The part of the Track My Wealth Project that organizes the ledger with double-entry accounting.
+Ledger Service is the REST API service that organizes the ledger with double-entry accounting.
 
 ## Terms of usage
 

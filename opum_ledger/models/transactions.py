@@ -1,15 +1,15 @@
 from pydantic import Field
 from pymongo import IndexModel
 
-from tmw_ledger.domain.types.ledger import LedgerUUID
-from tmw_ledger.domain.types.transaction import (
+from opum_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.domain.types.transaction import (
     Detail,
     TransactionDateTime,
     TransactionDescription,
     TransactionState,
     TransactionUUID,
 )
-from tmw_ledger.models.base import BaseAppModel
+from opum_ledger.models.base import BaseAppModel
 
 
 class TransactionModel(BaseAppModel):

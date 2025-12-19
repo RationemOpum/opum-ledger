@@ -14,8 +14,8 @@ from essentials.exceptions import (
 )
 from pydantic import ValidationError
 
-from tmw_ledger.core.exceptions import PreconditionFailed
-from tmw_ledger.core.logging import logger
+from opum_ledger.core.exceptions import PreconditionFailed
+from opum_ledger.core.logging import logger
 
 
 def configure_error_handlers(app: Application) -> None:  # noqa: C901

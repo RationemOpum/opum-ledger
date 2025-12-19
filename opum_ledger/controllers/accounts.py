@@ -9,11 +9,11 @@ from blacksheep.server.authorization import auth
 from blacksheep.server.controllers import APIController, delete, get, post, put
 from pydantic import RootModel
 
-from tmw_ledger.controllers.base import IfMatch
-from tmw_ledger.core.logging import logger
-from tmw_ledger.domain.accounts import Account, AccountsBL, AccountUpdate, NewAccount
-from tmw_ledger.domain.types.account import AccountUUID
-from tmw_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.controllers.base import IfMatch
+from opum_ledger.core.logging import logger
+from opum_ledger.domain.accounts import Account, AccountsBL, AccountUpdate, NewAccount
+from opum_ledger.domain.types.account import AccountUUID
+from opum_ledger.domain.types.ledger import LedgerUUID
 
 
 @dataclass

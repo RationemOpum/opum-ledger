@@ -1,7 +1,7 @@
 from pymongo import IndexModel
 
-from tmw_ledger.domain.types.ledger import LedgerDescription, LedgerName, LedgerUUID
-from tmw_ledger.models.base import BaseAppModel
+from opum_ledger.domain.types.ledger import LedgerDescription, LedgerName, LedgerUUID
+from opum_ledger.models.base import BaseAppModel
 
 
 class LedgerModel(BaseAppModel):

@@ -3,6 +3,7 @@ import logging
 import pytest
 from pytest_mongo import factories
 
+from opum_ledger.settings import Settings, load_settings
 from tests.fixtures.api_client import (
     api_client,  # noqa: F401
     api_client_ro,  # noqa: F401
@@ -25,7 +26,6 @@ from tests.fixtures.common import (  # noqa: F401
     ledger_one,
     ledger_two,
 )
-from tmw_ledger.settings import Settings, load_settings
 
 mongo_proc = factories.mongo_proc()
 mongodb = factories.mongodb("mongo_proc")
@@ -41,6 +41,6 @@ def app_settings(request: type[pytest.FixtureRequest]) -> Settings:
 
 @pytest.fixture
 async def init_db(request: type[pytest.FixtureRequest], app_settings: Settings) -> None:
-    from tmw_ledger.db import init_db
+    from opum_ledger.db import init_db
 
     await init_db(app_settings)

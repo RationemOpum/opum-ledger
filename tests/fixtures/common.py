@@ -4,12 +4,12 @@ from uuid import uuid7
 
 import pytest
 
-from tmw_ledger.domain.accounts import Account
-from tmw_ledger.domain.commodities import Commodity
-from tmw_ledger.domain.ledgers import Ledger
-from tmw_ledger.models.accounts import AccountModel
-from tmw_ledger.models.commodities import CommodityModel
-from tmw_ledger.models.ledger import LedgerModel
+from opum_ledger.domain.accounts import Account
+from opum_ledger.domain.commodities import Commodity
+from opum_ledger.domain.ledgers import Ledger
+from opum_ledger.models.accounts import AccountModel
+from opum_ledger.models.commodities import CommodityModel
+from opum_ledger.models.ledger import LedgerModel
 
 
 @pytest.fixture

@@ -8,9 +8,9 @@ from blacksheep.server.authorization import auth
 from blacksheep.server.controllers import APIController, delete, get, post, put
 from pydantic import UUID7
 
-from tmw_ledger.controllers.base import IfMatch
-from tmw_ledger.core.logging import logger
-from tmw_ledger.domain.commodities import CommoditiesBL, Commodity, NewCommodity, UpdateCommodity
+from opum_ledger.controllers.base import IfMatch
+from opum_ledger.core.logging import logger
+from opum_ledger.domain.commodities import CommoditiesBL, Commodity, NewCommodity, UpdateCommodity
 
 
 class Commodities(APIController):

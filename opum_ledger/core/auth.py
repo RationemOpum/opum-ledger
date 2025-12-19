@@ -4,7 +4,7 @@ from essentials.secrets import Secret
 from guardpost import Policy
 from guardpost.common import AuthenticatedRequirement
 
-from tmw_ledger.settings import Settings
+from opum_ledger.settings import Settings
 
 
 def use_auth(app: Application, settings: Settings):

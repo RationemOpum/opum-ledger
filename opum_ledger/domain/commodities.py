@@ -9,9 +9,9 @@ from pydantic import UUID7, BaseModel, ConfigDict, TypeAdapter
 from pymongo.errors import DuplicateKeyError
 from pymongo.results import UpdateResult
 
-from tmw_ledger.core.exceptions import PreconditionFailed
-from tmw_ledger.core.services import add_service
-from tmw_ledger.domain.types.commodity import (
+from opum_ledger.core.exceptions import PreconditionFailed
+from opum_ledger.core.services import add_service
+from opum_ledger.domain.types.commodity import (
     CommodityCode,
     CommodityCreatedAt,
     CommodityIsOnMarket,
@@ -21,8 +21,8 @@ from tmw_ledger.domain.types.commodity import (
     CommodityUpdatedAt,
     CommodityUUID,
 )
-from tmw_ledger.domain.types.ledger import LedgerUUID
-from tmw_ledger.models.commodities import CommodityModel
+from opum_ledger.domain.types.ledger import LedgerUUID
+from opum_ledger.models.commodities import CommodityModel
 
 
 class CommodityBase(BaseModel):
