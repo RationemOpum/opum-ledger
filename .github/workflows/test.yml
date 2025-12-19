@@ -18,6 +18,8 @@ jobs:
           - 27017:27017
         env:
           MONGO_INITDB_DATABASE: test
+          MONGO_INITDB_ROOT_USERNAME: ledger
+          MONGO_INITDB_ROOT_PASSWORD: password
         options: >-
           --health-cmd "mongosh --eval 'db.adminCommand({ping: 1})'"
           --health-interval 10s
@@ -53,6 +55,10 @@ jobs:
         env:
           APP_SETTINGS_FILE: settings_test.yaml
           APP_DB_PORT: 27017
+          APP_DB_HOST: mongodb
+          APP_DB_NAME: test
+          APP_DB_USER: ledger
+          APP_DB_PASSWORD: password
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
