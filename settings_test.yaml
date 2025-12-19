@@ -1,6 +1,6 @@
 # Default application settings, to run the application for local development.
 info:
-  title: Track My Wealth Ledger Backend Service
+  title: Ledger Backend Service
   version: 0.1.0
   description: Service to track ledger with double-entry accounting
 
