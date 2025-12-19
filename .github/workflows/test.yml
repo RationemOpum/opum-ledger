@@ -54,11 +54,11 @@ jobs:
           uv run pytest -c pytest-ci.ini --cov=opum_ledger --cov-report=xml --cov-report=term -k test_create_ledger_success
         env:
           APP_SETTINGS_FILE: settings_test.yaml
-          APP_DB_PORT: 27017
-          APP_DB_HOST: mongodb
-          APP_DB_DATABASE: test
-          APP_DB_USER: ledger
-          APP_DB_PASSWORD: password
+          APP_DB__PORT: 27017
+          APP_DB__HOST: mongodb
+          APP_DB__DATABASE: test
+          APP_DB__USER: ledger
+          APP_DB__PASSWORD: password
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
