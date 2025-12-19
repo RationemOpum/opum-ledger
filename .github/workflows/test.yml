@@ -55,7 +55,7 @@ jobs:
         env:
           APP_SETTINGS_FILE: settings_test.yaml
           APP_DB__PORT: 27017
-          APP_DB__HOST: mongodb
+          APP_DB__HOST: localhost
           APP_DB__DATABASE: test
           APP_DB__USER: ledger
           APP_DB__PASSWORD: password
