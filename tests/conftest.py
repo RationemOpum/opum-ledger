@@ -28,7 +28,6 @@ from tests.fixtures.common import (  # noqa: F401
     ledger_two,
 )
 
-logging.info(os.environ)
 if os.environ.get("CI"):
     mongo_external = factories.mongodb("mongo_noproc")
 else:
