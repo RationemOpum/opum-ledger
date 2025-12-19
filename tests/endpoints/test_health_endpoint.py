@@ -1,3 +1,4 @@
+# ruff: noqa: S101, D100, D101, D102, D103
 """Tests for health check endpoint."""
 
 import pytest

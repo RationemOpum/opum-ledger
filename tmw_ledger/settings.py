@@ -25,8 +25,8 @@ class Database(BaseModel):
     driver: str = "mongodb"
     host: str = "localhost"
     port: int = 27017
-    user: str | None = "user"
-    password: str | None = "password"
+    user: str | None = None
+    password: str | None = None
     database: str = "ledger"
 
 

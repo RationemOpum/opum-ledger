@@ -40,7 +40,7 @@ def app_settings(request: type[pytest.FixtureRequest]) -> Settings:
 
 
 @pytest.fixture
-async def init_db(request: type[pytest.FixtureRequest], app_settings: Settings):
+async def init_db(request: type[pytest.FixtureRequest], app_settings: Settings) -> None:
     from tmw_ledger.db import init_db
 
     await init_db(app_settings)

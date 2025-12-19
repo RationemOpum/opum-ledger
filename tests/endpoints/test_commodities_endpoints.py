@@ -1,5 +1,6 @@
 # ruff: noqa: S101, D100, D101, D102, D103
 import asyncio
+from typing import Any
 
 from blacksheep import JSONContent
 from blacksheep.testing import TestClient
@@ -10,7 +11,7 @@ from tests.base import BaseTestEndpoints
 class TestCommoditiesEndpoints(BaseTestEndpoints):
     api_path: str = "/api/v1/commodities/"
 
-    async def _create_ledger(self, api_client: TestClient, name: str = "Commodities Test Ledger"):
+    async def _create_ledger(self, api_client: TestClient, name: str = "Commodities Test Ledger") -> Any:
         """Help to create a ledger and return its parsed JSON."""
         path = "/api/v1/ledgers/"
         response = await api_client.post(
@@ -25,7 +26,7 @@ class TestCommoditiesEndpoints(BaseTestEndpoints):
         assert response.status == 200
         return await response.json()
 
-    async def test_create_and_list_commodities(self, api_client: TestClient):
+    async def test_create_and_list_commodities(self, api_client: TestClient) -> None:
         """Create commodities for a ledger and list them."""
         # create ledger
         ledger = await self._create_ledger(api_client)
@@ -89,7 +90,7 @@ class TestCommoditiesEndpoints(BaseTestEndpoints):
         codes = {i["code"] for i in items}
         assert {"USD", "EUR"}.issubset(codes)
 
-    async def test_create_duplicate_code_conflict(self, api_client: TestClient):
+    async def test_create_duplicate_code_conflict(self, api_client: TestClient) -> None:
         """Creating a commodity with duplicate code in the same ledger should return 409."""
         ledger = await self._create_ledger(api_client, name="Duplicate Code Ledger")
         ledger_id = ledger["id"]
@@ -125,7 +126,7 @@ class TestCommoditiesEndpoints(BaseTestEndpoints):
         error_content = await response.json()
         assert "duplicate key error collection" in error_content.get("detail", "")
 
-    async def test_update_commodity_success_and_concurrency(self, api_client: TestClient):
+    async def test_update_commodity_success_and_concurrency(self, api_client: TestClient) -> None:
         """Update commodity and test optimistic concurrency via updated_at."""
         ledger = await self._create_ledger(api_client, name="Concurrency Ledger")
         ledger_id = ledger["id"]
@@ -166,7 +167,7 @@ class TestCommoditiesEndpoints(BaseTestEndpoints):
         update_resp = await api_client.put(
             update_path,
             content=JSONContent(data=update_payload),
-            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore[reportUnknownVariableType] due to bug in heders.pyi
+            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore
         )
 
         assert update_resp.status == 200
@@ -186,12 +187,12 @@ class TestCommoditiesEndpoints(BaseTestEndpoints):
         conflict_resp = await api_client.put(
             update_path,
             content=JSONContent(data=stale_payload),
-            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore[reportUnknownVariableType] due to bug in heders.pyi
+            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore
         )
 
         assert conflict_resp.status == 412
 
-    async def test_delete_commodity(self, api_client: TestClient):
+    async def test_delete_commodity(self, api_client: TestClient) -> None:
         """Delete commodity from ledger and verify it is no longer listed."""
         ledger = await self._create_ledger(api_client, name="Delete Commodity Ledger")
         ledger_id = ledger["id"]
@@ -232,7 +233,7 @@ class TestCommoditiesEndpoints(BaseTestEndpoints):
         items2 = await list_resp2.json()
         assert not any(i["id"] == commodity_id for i in items2)
 
-    async def test_create_commodity_validation_errors(self, api_client: TestClient):
+    async def test_create_commodity_validation_errors(self, api_client: TestClient) -> None:
         """Validation errors when creating commodity should return 400."""
         ledger = await self._create_ledger(api_client, name="Validation Ledger")
         ledger_id = ledger["id"]

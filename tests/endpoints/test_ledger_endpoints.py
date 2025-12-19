@@ -24,7 +24,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         api_client: TestClient,
         name: str,
         description: str | None,
-    ):
+    ) -> None:
         """Test successful ledger creation."""
         path = self._endpoint("/")
 
@@ -45,7 +45,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert "created_at" in data
         assert "updated_at" in data
 
-    async def test_create_ledger_invalid_name_empty(self, api_client: TestClient):
+    async def test_create_ledger_invalid_name_empty(self, api_client: TestClient) -> None:
         """Test ledger creation with empty name fails."""
         path = self._endpoint("/")
 
@@ -61,7 +61,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
 
         assert response.status == 400
 
-    async def test_create_ledger_invalid_name_too_long(self, api_client: TestClient):
+    async def test_create_ledger_invalid_name_too_long(self, api_client: TestClient) -> None:
         """Test ledger creation with name too long fails."""
         path = self._endpoint("/")
         long_name = "x" * 257  # Exceeds max_length=256
@@ -78,7 +78,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
 
         assert response.status == 400
 
-    async def test_create_ledger_invalid_description_too_long(self, api_client: TestClient):
+    async def test_create_ledger_invalid_description_too_long(self, api_client: TestClient) -> None:
         """Test ledger creation with description too long fails."""
         path = self._endpoint("/")
         long_description = "x" * 1025  # Exceeds max_length=1024
@@ -95,7 +95,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
 
         assert response.status == 400
 
-    async def test_create_ledger_missing_name(self, api_client: TestClient):
+    async def test_create_ledger_missing_name(self, api_client: TestClient) -> None:
         """Test ledger creation without required name fails."""
         path = self._endpoint("/")
 
@@ -110,7 +110,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
 
         assert response.status == 400
 
-    async def test_create_ledger_duplicate_name(self, api_client: TestClient):
+    async def test_create_ledger_duplicate_name(self, api_client: TestClient) -> None:
         """Test ledger creation with duplicate name fails."""
         path = self._endpoint("/")
         ledger_data = {
@@ -137,7 +137,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         )
         assert response.status == 409  # Conflict
 
-    async def test_get_all_ledgers_empty(self, api_client: TestClient):
+    async def test_get_all_ledgers_empty(self, api_client: TestClient) -> None:
         """Test getting all ledgers when none exist."""
         path = self._endpoint("/")
 
@@ -148,12 +148,12 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert isinstance(data, list)
         assert len(data) == 0
 
-    async def test_get_all_ledgers_with_data(self, api_client: TestClient):
+    async def test_get_all_ledgers_with_data(self, api_client: TestClient) -> None:
         """Test getting all ledgers when some exist."""
         path = self._endpoint("/")
 
         # Create test ledgers
-        ledgers_to_create = [
+        ledgers_to_create: list[dict[str, str | None]] = [
             {"name": "Ledger 1", "description": "First ledger"},
             {"name": "Ledger 2", "description": "Second ledger"},
             {"name": "Ledger 3", "description": None},
@@ -177,11 +177,11 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert len(data) == 3
 
         # Verify all created ledgers are returned
-        returned_names = {ledger["name"] for ledger in data}
-        expected_names = {ledger["name"] for ledger in ledgers_to_create}
+        returned_names: set[str] = {ledger["name"] for ledger in data}
+        expected_names: set[str | None] = {ledger["name"] for ledger in ledgers_to_create}
         assert returned_names == expected_names
 
-    async def test_update_ledger_success(self, api_client: TestClient):
+    async def test_update_ledger_success(self, api_client: TestClient) -> None:
         """Test successful ledger update."""
         path = self._endpoint("/")
 
@@ -225,7 +225,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert updated_ledger["created_at"]  # Not empty
         assert updated_ledger["updated_at"]  # Not empty
 
-    async def test_update_ledger_partial(self, api_client: TestClient):
+    async def test_update_ledger_partial(self, api_client: TestClient) -> None:
         """Test partial ledger update (only name or description)."""
         path = self._endpoint("/")
 
@@ -261,7 +261,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert "created_at" in updated_ledger
         assert "updated_at" in updated_ledger
 
-    async def test_update_ledger_nonexistent(self, api_client: TestClient):
+    async def test_update_ledger_nonexistent(self, api_client: TestClient) -> None:
         """Test updating a non-existent ledger."""
         # Use a valid UUID7 format that doesn't exist
         fake_id = "01234567-89ab-7def-0123-456789abcdef"
@@ -279,7 +279,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
 
         assert update_response.status == 404
 
-    async def test_update_ledger_invalid_id(self, api_client: TestClient):
+    async def test_update_ledger_invalid_id(self, api_client: TestClient) -> None:
         """Test updating a ledger with invalid ID format."""
         invalid_id = "not-a-valid-uuid"
         update_path = self._endpoint(f"/{invalid_id}")
@@ -296,7 +296,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
 
         assert update_response.status == 400
 
-    async def test_update_ledger_validation_errors(self, api_client: TestClient):
+    async def test_update_ledger_validation_errors(self, api_client: TestClient) -> None:
         """Test ledger update with validation errors."""
         path = self._endpoint("/")
 
@@ -329,7 +329,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
 
         assert update_response.status == 400
 
-    async def test_ledger_workflow_complete(self, api_client: TestClient):
+    async def test_ledger_workflow_complete(self, api_client: TestClient) -> None:
         """Test complete ledger workflow: create -> get all -> update -> get all."""
         path = self._endpoint("/")
 
@@ -357,6 +357,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         )
         assert ledger2_response.status == 200
         ledger2 = await ledger2_response.json()
+        assert ledger1["id"] != ledger2["id"]
 
         # 2. Get all ledgers
         get_response = await api_client.get(path)
@@ -390,7 +391,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert updated_ledger_in_list["name"] == "Updated Workflow Test 1"
         assert updated_ledger_in_list["description"] == "Updated first test ledger"
 
-    async def test_update_ledger_if_unmodified_since_success(self, api_client: TestClient):
+    async def test_update_ledger_if_unmodified_since_success(self, api_client: TestClient) -> None:
         """Test update succeeds when If-Unmodified-Since matches current updated_at."""
         path = self._endpoint("/")
 
@@ -413,7 +414,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         update_path = self._endpoint(f"/{ledger_id}")
         update_response = await api_client.put(
             update_path,
-            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore[reportUnknownVariableType] due to bug in heders.pyi
+            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore
             content=JSONContent(
                 data={
                     "name": "IUS Success Updated",
@@ -427,7 +428,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert updated_ledger["id"] == ledger_id
         assert updated_ledger["name"] == "IUS Success Updated"
 
-    async def test_update_ledger_if_match_conflict(self, api_client: TestClient):
+    async def test_update_ledger_if_match_conflict(self, api_client: TestClient) -> None:
         """Test update fails with 412 when ledger was modified after the provided If-Match."""
         path = self._endpoint("/")
 
@@ -444,7 +445,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         assert create_response.status == 200
         created_ledger = await create_response.json()
         ledger_id = created_ledger["id"]
-        etag: str = create_response.headers.get(b"ETag")[0].decode("utf-8")  # type: ignore[reportUnknownVariableType] due to bug in heders.pyi
+        etag: str = create_response.headers.get(b"ETag")[0].decode("utf-8")  # type: ignore
 
         # Perform another update to advance the ledger's updated_at (simulate another client)
         update_path = self._endpoint(f"/{ledger_id}")
@@ -459,7 +460,7 @@ class TestLedgerEndpoints(BaseTestEndpoints):
         )
         assert first_update_response.status == 200
         # ETag should have changed
-        assert first_update_response.headers.get(b"ETag")[0].decode("utf-8") != etag  # type: ignore[reportUnknownVariableType] due to bug in heders.pyi
+        assert first_update_response.headers.get(b"ETag")[0].decode("utf-8") != etag  # type: ignore
 
         # Attempt update with stale If-Unmodified-Since header — should fail with 412
         conflict_update_response = await api_client.put(

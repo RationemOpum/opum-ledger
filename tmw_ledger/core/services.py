@@ -42,13 +42,6 @@ def add_service(scope: ScopeType = "scoped"):
     return decorator
 
 
-def create_init_db_handler(configuration):
-    async def _inner():
-        await init_db(configuration)
-
-    return _inner
-
-
 def configure_services(
     settings: Settings,
 ) -> tuple[Container, Settings]:

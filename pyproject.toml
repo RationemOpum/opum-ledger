@@ -26,6 +26,7 @@ dependencies = [
 dev = [
     "mypy>=1.18.2",
     "polyfactory>=2.22.2",
+    "pre-commit>=4.5.1",
     "pytest>=8.4.2",
     "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
@@ -81,4 +82,4 @@ line-ending = "auto"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "B", "I", "C", "D", "Q", "S", "T"]
-ignore = ["D106"]
+ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107"]

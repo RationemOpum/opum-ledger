@@ -1,8 +1,8 @@
 from typing import ClassVar
 from uuid import uuid7
 
-from beanie import UpdateResponse
 import pendulum
+from beanie import UpdateResponse
 from beanie.odm.operators.update.general import Set
 from essentials.exceptions import ConflictException, ObjectNotFound
 from pydantic import UUID7, BaseModel, ConfigDict, TypeAdapter

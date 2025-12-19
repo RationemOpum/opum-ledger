@@ -18,7 +18,7 @@ from tmw_ledger.core.exceptions import PreconditionFailed
 from tmw_ledger.core.logging import logger
 
 
-def configure_error_handlers(app: Application) -> None:
+def configure_error_handlers(app: Application) -> None:  # noqa: C901
     """Configure error handlers for the application."""
 
     async def not_found_handler(_app: Application, _request: Request, exception: Exception) -> Response:

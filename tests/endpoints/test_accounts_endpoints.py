@@ -1,5 +1,6 @@
 # ruff: noqa: S101, D100, D101, D102, D103
 import asyncio
+from typing import Any
 
 from blacksheep import JSONContent
 from blacksheep.testing import TestClient
@@ -10,7 +11,7 @@ from tests.base import BaseTestEndpoints
 class TestAccountsEndpoints(BaseTestEndpoints):
     api_path: str = "/api/v1/accounts/"
 
-    async def _create_ledger(self, api_client: TestClient, name: str = "Accounts Test Ledger"):
+    async def _create_ledger(self, api_client: TestClient, name: str = "Accounts Test Ledger") -> Any:
         """Help to create a ledger and return its parsed JSON."""
         path = "/api/v1/ledgers/"
         response = await api_client.post(
@@ -25,7 +26,7 @@ class TestAccountsEndpoints(BaseTestEndpoints):
         assert response.status == 200
         return await response.json()
 
-    async def test_create_and_list_accounts(self, api_client: TestClient):
+    async def test_create_and_list_accounts(self, api_client: TestClient) -> None:
         """Create accounts for a ledger and list them."""
         ledger = await self._create_ledger(api_client)
         ledger_id = ledger["id"]
@@ -76,7 +77,7 @@ class TestAccountsEndpoints(BaseTestEndpoints):
         ids = {i["id"] for i in accounts}
         assert {first["id"], second["id"]}.issubset(ids)
 
-    async def test_account_validation_errors(self, api_client: TestClient):
+    async def test_account_validation_errors(self, api_client: TestClient) -> None:
         """Validation errors when creating account should return 400."""
         ledger = await self._create_ledger(api_client, name="Validation Ledger")
         ledger_id = ledger["id"]
@@ -93,7 +94,7 @@ class TestAccountsEndpoints(BaseTestEndpoints):
             resp = await api_client.post(path, content=JSONContent(data=payload))
             assert resp.status == 400, f"Expected 400 for {description}, got {resp.status}"
 
-    async def test_get_update_delete_account_and_tree(self, api_client: TestClient):
+    async def test_get_update_delete_account_and_tree(self, api_client: TestClient) -> None:
         """Create an account, get it, update it, delete it and verify tree."""
         ledger = await self._create_ledger(api_client, name="Account Full Flow Ledger")
         ledger_id = ledger["id"]
@@ -149,7 +150,7 @@ class TestAccountsEndpoints(BaseTestEndpoints):
         accounts = items.get("accounts")
         assert not any(a["id"] == account_id for a in accounts)
 
-    async def test_update_account_success_and_concurrency(self, api_client: TestClient):
+    async def test_update_account_success_and_concurrency(self, api_client: TestClient) -> None:
         """Update account and test optimistic concurrency via updated_at."""
         ledger = await self._create_ledger(api_client, name="Concurrency Ledger")
         ledger_id = ledger["id"]
@@ -181,7 +182,7 @@ class TestAccountsEndpoints(BaseTestEndpoints):
         update_resp = await api_client.put(
             update_path,
             content=JSONContent(data=update_payload),
-            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore[reportUnknownVariableType] due to bug in headers.pyi
+            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore
         )
 
         assert update_resp.status == 200
@@ -193,7 +194,7 @@ class TestAccountsEndpoints(BaseTestEndpoints):
         conflict_resp = await api_client.put(
             update_path,
             content=JSONContent(data=stale_payload),
-            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore[reportUnknownVariableType] due to bug in headers.pyi
+            headers={"If-Match": etag[0].decode("utf-8")},  # type: ignore
         )
 
         assert conflict_resp.status == 412

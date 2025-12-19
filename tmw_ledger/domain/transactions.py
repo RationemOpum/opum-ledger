@@ -82,7 +82,7 @@ class TransactionsDAL:
 
         return Transaction.model_validate(transaction, from_attributes=True)
 
-    async def find_ledger_transactions(
+    async def find_ledger_transactions(  # noqa: C901
         self,
         ledger_id: LedgerUUID,
         # accounts_ids: list[UUID4] | None = None,
@@ -172,7 +172,7 @@ class TransactionsDAL:
                         }
                     }
                 )
-        compiled_filters = {"$and": []}
+        compiled_filters: dict[str, Any] = {"$and": []}
         if accounts_filters["+"]:
             compiled_filters["$and"].append(
                 {

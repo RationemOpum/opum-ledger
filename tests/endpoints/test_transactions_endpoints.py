@@ -22,7 +22,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_groceries_ledger_one: Account,
-    ):
+    ) -> None:
         """Create a simple balanced transaction and verify it."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -70,7 +70,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """Creating an unbalanced transaction should return 400."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -104,7 +104,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_eur_ledger_one: Commodity,
         account_assets_cash_usd_ledger_one: Account,
         account_assets_cash_eur_ledger_one: Account,
-    ):
+    ) -> None:
         """Create a transaction with currency exchange (price field)."""
         ledger_id = str(ledger_one.id)
         usd_id = str(commodity_usd_ledger_one.id)
@@ -152,7 +152,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """Get a specific transaction by ID."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -195,7 +195,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         self,
         api_client: TestClient,
         ledger_one: Ledger,
-    ):
+    ) -> None:
         """Getting a nonexistent transaction should return 404."""
         ledger_id = str(ledger_one.id)
 
@@ -211,7 +211,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """List all transactions in a ledger."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -259,7 +259,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """List transactions with pagination parameters."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -315,7 +315,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
         account_expenses_rent_ledger_one: Account,
-    ):
+    ) -> None:
         """List transactions filtered by account."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -385,7 +385,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         account_assets_cash_ledger_one: Account,
         account_incomes_salary_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """List transactions filtered by account with direction (+ for credit, - for debit)."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -464,7 +464,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """List transactions filtered by date range."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -537,7 +537,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         account_assets_cash_usd_ledger_one: Account,
         account_assets_cash_eur_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """List transactions filtered by exchange flag."""
         ledger_id = str(ledger_one.id)
         usd_id = str(commodity_usd_ledger_one.id)
@@ -619,7 +619,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """List transactions with different ordering."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -673,7 +673,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """Update a transaction."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -729,7 +729,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """Update a transaction using ETag for optimistic locking."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -758,7 +758,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         create_response = await api_client.post(create_path, content=JSONContent(data=transaction_data))
         created = await create_response.json()
         transaction_id = created["id"]
-        original_etag = create_response.headers.get(b"ETag")[0].decode("utf-8")  # type: ignore[reportUnknownVariableType]
+        original_etag = create_response.headers.get(b"ETag")[0].decode("utf-8")  # type: ignore
 
         # Update with the original ETag - should succeed
         update_path = self._endpoint(f"/{ledger_id}/{transaction_id}")
@@ -769,7 +769,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         )
         assert first_update.status == 200
         assert first_update.headers.get(b"ETag") is not None
-        assert first_update.headers.get(b"ETag")[0].decode("utf-8") != original_etag  # type: ignore[reportUnknownVariableType]
+        assert first_update.headers.get(b"ETag")[0].decode("utf-8") != original_etag  # type: ignore
 
         stale_update = await api_client.put(
             update_path,
@@ -785,7 +785,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """Delete a transaction."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -829,7 +829,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """Delete a transaction using ETag for optimistic locking."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)
@@ -856,7 +856,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         create_response = await api_client.post(create_path, content=JSONContent(data=transaction_data))
         created = await create_response.json()
         transaction_id = created["id"]
-        etag: str = create_response.headers.get(b"ETag")[0].decode("utf-8")  # type: ignore[reportUnknownVariableType]
+        etag: str = create_response.headers.get(b"ETag")[0].decode("utf-8")  # type: ignore
 
         # Update transaction to change ETag
         await asyncio.sleep(0.01)
@@ -872,7 +872,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         self,
         api_client: TestClient,
         ledger_one: Ledger,
-    ):
+    ) -> None:
         """Creating a transaction with empty details should return 400."""
         ledger_id = str(ledger_one.id)
 
@@ -886,7 +886,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         response = await api_client.post(path, content=JSONContent(data=transaction_data))
         assert response.status == 400
 
-    async def test_create_transaction_for_nonexistent_ledger_fails(self, api_client: TestClient):
+    async def test_create_transaction_for_nonexistent_ledger_fails(self, api_client: TestClient) -> None:
         """Creating a transaction for a nonexistent ledger should return 404 or 400."""
         # Using UUID4 instead of UUID7 will fail validation, returning 400
         # This is expected behavior - validation happens before ledger existence check
@@ -918,7 +918,7 @@ class TestTransactionsEndpoints(BaseTestEndpoints):
         commodity_usd_ledger_one: Commodity,
         account_assets_cash_ledger_one: Account,
         account_expenses_food_ledger_one: Account,
-    ):
+    ) -> None:
         """Test transaction state changes from uncleared to pending to cleared."""
         ledger_id = str(ledger_one.id)
         commodity_id = str(commodity_usd_ledger_one.id)

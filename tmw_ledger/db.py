@@ -24,14 +24,15 @@ async def init_db(settings: Settings) -> AsyncMongoClient:
     password: str | None = settings.db.password
     port: int = settings.db.port
     database: str = settings.db.database
+    client: AsyncMongoClient
     if user and password:
-        client: AsyncMongoClient = AsyncMongoClient(
+        client = AsyncMongoClient(
             f"{driver}://{user}:{password}@{host}:{port}/{database}",
             uuidRepresentation="standard",
             tz_aware=True,
         )
     else:
-        client: AsyncMongoClient = AsyncMongoClient(
+        client = AsyncMongoClient(
             f"{driver}://{host}:{port}/{database}",
             uuidRepresentation="standard",
             tz_aware=True,
