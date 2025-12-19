@@ -29,10 +29,10 @@ from tests.fixtures.common import (  # noqa: F401
 )
 
 if os.environ.get("CI"):
-    mongo_external = factories.mongodb("mongo_noproc")
+    mongo_proc = factories.mongo_noproc()
 else:
     mongo_proc = factories.mongo_proc()
-    mongodb = factories.mongodb("mongo_proc")
+mongodb = factories.mongodb("mongo_proc")
 
 logging.getLogger("pymongo").setLevel(logging.INFO)
 logging.getLogger("faker.factory").setLevel(logging.INFO)
