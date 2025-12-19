@@ -27,6 +27,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Print all environment variables (Linux/macOS)
+        run: |
+          echo "--- Environment Variables (Linux/macOS) ---"
+          env | sort
+        shell: bash
+
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
